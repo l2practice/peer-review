@@ -391,7 +391,7 @@ body.fs .wrap { padding: 12px 20px; }
       <div class="qrbox">
         <h3>Quét để chấm điểm</h3>
         <div class="qr" id="qr"></div>
-        <p class="small">Nhập MSSV → chấm người đến bàn mình</p>
+        <p class="small">Đăng nhập an toàn để chấm và xem lịch sử điểm</p>
         <p class="url" id="qrUrl"></p>
       </div>
     </div>
@@ -433,7 +433,7 @@ body.fs .wrap { padding: 12px 20px; }
       <div class="field"><label for="apiUrl">URL Web App (Apps Script, kết thúc bằng /exec)</label><input id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
       <div class="field" style="max-width:220px"><label for="pin">PIN giảng viên</label><input id="pin" type="password" autocomplete="off"></div>
       <div class="row"><button class="primary" id="btnSaveCfg">Lưu & kiểm tra kết nối</button><span class="status" id="cfgStatus"></span></div>
-      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ; chỉ phần chấm điểm qua QR cần Google Sheet. URL và PIN chỉ lưu trên máy này.</p>
+      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần có Script Property FIREBASE_API_KEY và Firebase Auth phải cho phép tên miền l2practice.github.io. URL và PIN chỉ lưu trên máy này.</p>
     </div>
     <p class="muted small">Rubric chấm điểm nằm ở tab Thiết lập và có thể đổi theo từng buổi.</p>
   </section>
@@ -455,8 +455,10 @@ body.fs .wrap { padding: 12px 20px; }
     </div>
   </header>
   <div id="stLogin" class="panel">
-    <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="off" placeholder="VD: 2201001"></div>
-    <button class="primary" id="btnStLogin">Tiếp tục</button>
+    <div><p class="label">Tài khoản sinh viên</p><h2>Đăng nhập để chấm điểm</h2><p class="muted small">Dùng MSSV và mật khẩu tài khoản ArticuWrite của bạn.</p></div>
+    <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="username" placeholder="VD: 2201001"></div>
+    <div class="field"><label for="stPassword">Mật khẩu</label><input id="stPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu tài khoản ArticuWrite"></div>
+    <button class="primary" id="btnStLogin">Đăng nhập</button>
     <p class="status" id="stLoginStatus"></p>
   </div>
   <div id="stMain" class="stack" hidden></div>
@@ -479,6 +481,40 @@ const CONFIG = {
     delivery: "Hiểu biết công cụ | 2\nDemo trên bài học thật | 2\nNhận định phản biện | 1.5\nQuản lý thời gian (time management) | 1\nGiọng nói rõ ràng (clear voice) | 1\nÂm lượng vừa đủ nghe (loud enough) | 1\nLưu loát (fluency) | 1.5"
   }
 };
+// Student accounts use the same Firebase Authentication project as ArticuWrite.
+// Passwords and auth tokens are never written to localStorage.
+const STUDENT_FIREBASE = {
+  apiKey: "AIzaSyCj8WTr6eaqMGhqKltiZ9444LELV-7ZDIw",
+  authDomain: "articuwrite.firebaseapp.com",
+  projectId: "articuwrite"
+};
+const STUDENT_EMAIL_DOMAIN = "students.articuwrite.app";
+let studentAuthPromise = null;
+function loadScriptOnce(src) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src; script.onload = resolve;
+    script.onerror = () => reject(new Error("Không tải được thư viện đăng nhập."));
+    document.head.append(script);
+  });
+}
+async function getStudentAuth() {
+  if (!studentAuthPromise) {
+    const base = "https://www.gstatic.com/firebasejs/10.12.2/";
+    studentAuthPromise = (async () => {
+      if (!window.firebase) await loadScriptOnce(base + "firebase-app-compat.js");
+      if (!window.firebase?.auth) await loadScriptOnce(base + "firebase-auth-compat.js");
+      if (!firebase.apps.length) firebase.initializeApp(STUDENT_FIREBASE);
+      const auth = firebase.auth();
+      await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+      return auth;
+    })().catch(error => { studentAuthPromise = null; throw error; });
+  }
+  return studentAuthPromise;
+}
+function normalizedStudentId(value) {
+  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "_");
+}
 const MAX_CRITERIA = 12;
 /** "Tên | điểm" mỗi dòng → [{name, max}] ; trả về {list, error} */
 function parseCriteria(text) {
@@ -512,7 +548,8 @@ const EN = {
   "Nhóm và số thứ tự":"Groups and presenter order","Đồng bộ lên Google Sheet":"Sync to Google Sheet","Ai đi đâu ở từng lượt":"Who goes where each round","Mỗi bàn nghe chủ đề gì":"Topics heard at each table",
   "Điểm micro-present":"Micro-present scores","Tải điểm":"Load scores","Xuất CSV":"Export CSV","Số phiếu theo lượt":"Ratings by round","GV chấm xác suất":"Teacher scoring",
   "Kết nối Google Sheet":"Google Sheet connection","URL Web App (Apps Script, kết thúc bằng /exec)":"Web App URL (Apps Script, ending in /exec)","PIN giảng viên":"Teacher PIN","Lưu & kiểm tra kết nối":"Save & test connection",
-  "Chấm micro-present":"Micro-present rating","Mã số sinh viên":"Student ID","Tiếp tục":"Continue","Đổi MSSV":"Change student ID","Tải lại":"Refresh",
+  "Chấm micro-present":"Micro-present rating","Mã số sinh viên":"Student ID","Tiếp tục":"Continue","Đăng nhập":"Sign in","Đăng xuất":"Sign out","Mật khẩu":"Password","Đăng nhập để chấm điểm":"Sign in to rate","Tài khoản sinh viên":"Student account","Dùng MSSV và mật khẩu tài khoản ArticuWrite của bạn.":"Use your Student ID and ArticuWrite password.","Mật khẩu tài khoản ArticuWrite":"ArticuWrite password","Đổi MSSV":"Change student ID","Tải lại":"Refresh",
+  "Đăng nhập an toàn để chấm và xem lịch sử điểm":"Sign in securely to rate and view your score history","Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần có Script Property FIREBASE_API_KEY và Firebase Auth phải cho phép tên miền l2practice.github.io. URL và PIN chỉ lưu trên máy này.":"Assignments and the timer work offline. For secure student sign-in, Apps Script needs the FIREBASE_API_KEY Script Property and Firebase Auth must authorize l2practice.github.io. The URL and PIN are saved on this device.",
   "Góp ý ngắn (không bắt buộc)":"Short comment (optional)","Góp ý":"Comment","Gửi điểm":"Submit rating","Tổng":"Total","Đã chấm":"Rated","tiêu chí":"criteria","tối đa ":"max "," đ":" pts",
   "Xuất sắc":"Excellent","Tốt":"Good","Đạt":"Fair","Cần cải thiện":"Needs improvement",
   "Quét để chấm điểm":"Scan to rate","Nhập MSSV → chấm người đến bàn mình":"Enter your student ID, then rate your table's presenter","Người di chuyển":"Presenters moving","Chuẩn bị":"Ready","Chưa bắt đầu":"Not started",
@@ -521,7 +558,7 @@ const EN = {
   "Bàn ":"Table ","Chưa có phân công.":"No assignments yet.","Lượt 1 sẽ di chuyển":"Round 1 presenters","Chủ đề:":"Topic:",
   "Bạn đi trình bày ở bàn ":"You are presenting at Table ","Bạn đang chấm người trình bày ở bàn mình":"You are rating the presenter at your table","Bạn đã gửi":"You submitted","điểm cho lượt này. Gửi lại sẽ thay điểm cũ.":" points this round. Resubmitting replaces the earlier rating.",
   "Đã gửi ":"Submitted "," điểm. Cảm ơn bạn!":" points. Thank you!","Chọn mức cho đủ các tiêu chí.":"Choose a level for every criterion.","Đang gửi…":"Submitting…","Đang tải…":"Loading…",
-  "Nhập MSSV.":"Enter your student ID.","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không kết nối được.":"Could not connect.","Lượt này bạn không chấm điểm.":"You do not rate anyone this round.",
+  "Nhập MSSV.":"Enter your student ID.","Nhập mật khẩu.":"Enter your password.","MSSV hoặc mật khẩu không đúng.":"Student ID or password is incorrect.","Tên miền này chưa được bật đăng nhập Firebase. Báo giảng viên thêm l2practice.github.io vào Authorized domains.":"Firebase sign-in is not enabled for this domain. Ask your instructor to add l2practice.github.io to Authorized domains.","Vui lòng đăng nhập lại.":"Please sign in again.","Phiên đăng nhập hết hạn. Hãy đăng nhập lại.":"Your session expired. Please sign in again.","Tài khoản này không có quyền truy cập.":"This account is not authorized.","Firebase chưa được cấu hình trong Apps Script.":"Firebase is not configured in Apps Script.","Đăng nhập nhiều lần không thành công. Vui lòng đợi rồi thử lại.":"Too many sign-in attempts. Please wait and try again.","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không kết nối được.":"Could not connect.","Lượt này bạn không chấm điểm.":"You do not rate anyone this round.",
   "GV đã chuyển lượt. ":"The teacher moved to a new round. ","Sang lượt mới":"Go to new round","Điểm nhận được":"Points received","Lượt bạn đã bình chọn":"Your ratings","Lịch sử qua các tuần":"Your history","Đang tải lịch sử từ Google Sheet…":"Loading history from Google Sheet…",
   "Chưa có lịch sử điểm.":"No score history yet.","Chưa thể tải lịch sử điểm.":"Score history is not available right now.","Người trình bày":"Presenter","Điểm":"Score","Tuần":"Session","Bạn đã bình chọn":"You rated","Bạn nhận được":"You received","phiếu":"ratings",
   "Đã đồng bộ":"Synced","Chưa đồng bộ":"Not synced","Mã buổi":"Session code","Đồng bộ lúc ":"Synced at ","Đang đồng bộ…":"Syncing…",
@@ -619,7 +656,7 @@ function apiUrl() {
 async function apiGet(params) {
   const u = new URL(apiUrl());
   Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
-  const r = await fetch(u.toString());
+  const r = await fetch(u.toString(), { cache: "no-store", referrerPolicy: "no-referrer" });
   return r.json();
 }
 async function apiPost(body) {
@@ -629,7 +666,8 @@ async function apiPost(body) {
 const ERR = {
   pin_sai: "PIN không đúng.", no_session: "Chưa có buổi nào được đồng bộ.", round_not_open: "Lượt này chưa mở.",
   rater_away: "Lượt này bạn đang đi thuyết trình nên không chấm.", wrong_presenter: "Người trình bày không khớp với phân công. Tải lại trang.",
-  rater_not_found: "Không tìm thấy MSSV trong buổi này.", presenter_not_found: "Không tìm thấy người trình bày.", bad_scores: "Điểm chưa hợp lệ."
+  rater_not_found: "Không tìm thấy MSSV trong buổi này.", presenter_not_found: "Không tìm thấy người trình bày.", bad_scores: "Điểm chưa hợp lệ.",
+  student_auth_required: "Vui lòng đăng nhập lại.", student_auth_invalid: "Phiên đăng nhập hết hạn. Hãy đăng nhập lại.", student_not_allowed: "Tài khoản này không có quyền truy cập.", firebase_not_configured: "Firebase chưa được cấu hình trong Apps Script."
 };
 const errText = e => ERR[e] || ("Lỗi: " + e);
 
@@ -1193,36 +1231,51 @@ let ST = { state: null, me: null, poll: null, round: -1, picks: [], dirty: false
 function initStudent() {
   if (ST.inited) return; ST.inited = true;
   $("#stId").value = store.get("stId", "");
+  $("#stPassword").value = "";
   $("#btnStLogin").onclick = studentLogin;
-  $("#stId").addEventListener("keydown", e => { if (e.key === "Enter") studentLogin(); });
+  ["#stId", "#stPassword"].forEach(selector => $(selector).addEventListener("keydown", e => { if (e.key === "Enter") studentLogin(); }));
   if (!apiUrl()) { setStatus($("#stLoginStatus"), "Trang chưa được kết nối với Google Sheet. Báo GV kiểm tra link QR.", "err"); $("#btnStLogin").disabled = true; }
-  else if ($("#stId").value) studentLogin();
 }
-async function fetchState() {
-  const r = await apiGet({ action: "state" });
+async function fetchState(idToken) {
+  const r = await apiGet({ action: "state", idToken });
   if (!r.ok) throw new Error(errText(r.error));
   return r.state;
 }
 async function studentLogin() {
-  const id = $("#stId").value.trim(); const s = $("#stLoginStatus");
+  const id = $("#stId").value.trim(), password = $("#stPassword").value, s = $("#stLoginStatus"), button = $("#btnStLogin");
   if (!id) return setStatus(s, "Nhập MSSV.", "err");
-  setStatus(s, "Đang tải…");
+  if (!password) return setStatus(s, "Nhập mật khẩu.", "err");
+  button.disabled = true; setStatus(s, "Đang tải…");
   try {
-    const state = await fetchState();
+    const auth = await getStudentAuth();
+    if (auth.currentUser) await auth.signOut();
+    const credential = await auth.signInWithEmailAndPassword(normalizedStudentId(id) + "@" + STUDENT_EMAIL_DOMAIN, password);
+    const signedInId = normalizedStudentId(String(credential.user.email || "").split("@")[0]);
+    if (signedInId !== normalizedStudentId(id)) { await auth.signOut(); throw new Error("MSSV hoặc mật khẩu không đúng."); }
+    const idToken = await credential.user.getIdToken();
+    const state = await fetchState(idToken);
     const me = memberById(state, id);
-    if (!me) return setStatus(s, "Không tìm thấy MSSV này trong buổi " + state.sessionName + ".", "err");
+    if (!me) { await auth.signOut(); return setStatus(s, "Không tìm thấy MSSV này trong buổi " + state.sessionName + ".", "err"); }
     store.set("stId", id);
     ST.state = state; ST.me = me; ST.round = -1;
     if (state.criteria && state.criteria.length) CONFIG.CRITERIA = state.criteria;
+    $("#stPassword").value = "";
     $("#stLogin").hidden = true; $("#stMain").hidden = false;
     renderStudent();
     loadStudentHistory();
     clearInterval(ST.poll); ST.poll = setInterval(pollState, 8000);
-  } catch (e) { setStatus(s, e.message || "Không kết nối được.", "err"); }
+  } catch (e) {
+    let message = e.message || "Không kết nối được.";
+    if (/auth\/unauthorized-domain/.test(e.code || "")) message = "Tên miền này chưa được bật đăng nhập Firebase. Báo giảng viên thêm l2practice.github.io vào Authorized domains.";
+    else if (/auth\/(invalid-credential|wrong-password|user-not-found|invalid-email|user-disabled|too-many-requests)/.test(e.code || "")) message = "MSSV hoặc mật khẩu không đúng.";
+    setStatus(s, message, "err");
+  } finally { button.disabled = false; }
 }
 async function pollState() {
   try {
-    const state = await fetchState();
+    const auth = await getStudentAuth();
+    if (!auth.currentUser) return studentLogout();
+    const state = await fetchState(await auth.currentUser.getIdToken());
     const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound;
     if (!changed) { ST.state = state; return; }
     if (!ST.dirty) { ST.state = state; renderStudent(); }
@@ -1234,8 +1287,9 @@ async function loadStudentHistory() {
   if (!status) return;
   setStatus(status, "Đang tải lịch sử từ Google Sheet…");
   try {
-    // Query the existing scores endpoint without a session filter to include previous sessions when available.
-    const r = await apiGet({ action: "scores" });
+    const auth = await getStudentAuth();
+    if (!auth.currentUser) throw new Error("student_auth_required");
+    const r = await apiGet({ action: "scores", idToken: await auth.currentUser.getIdToken() });
     if (!r.ok) throw new Error(errText(r.error));
     ST.historyRows = Array.isArray(r.rows) ? r.rows : [];
     ST.historyLoaded = true;
@@ -1244,6 +1298,13 @@ async function loadStudentHistory() {
     ST.historyRows = []; ST.historyLoaded = true;
     if (status.isConnected) setStatus(status, "Chưa thể tải lịch sử điểm.", "err");
   }
+}
+async function studentLogout() {
+  clearInterval(ST.poll); ST.poll = null;
+  try { const auth = await getStudentAuth(); if (auth.currentUser) await auth.signOut(); } catch {}
+  ST.state = null; ST.me = null; ST.historyRows = []; ST.historyLoaded = false; ST.dirty = false;
+  $("#stMain").replaceChildren(); $("#stMain").hidden = true; $("#stLogin").hidden = false; $("#stPassword").value = "";
+  setStatus($("#stLoginStatus"), "");
 }
 function sessionLabel(row) {
   if (row.sessionName) return row.sessionName;
@@ -1287,7 +1348,7 @@ function renderStudent({ carry = null } = {}) {
   box.append(el("div", { class: "panel" },
     el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, me.name), el("span", { class: "chip", style: `--gc:${gColor(me.groupIndex)}` }, "Bàn " + gName(me.groupIndex))),
     el("p", { class: "muted small" }, `Nhóm bạn trình bày: ${g.topic}`),
-    el("button", { type: "button", onclick: () => { clearInterval(ST.poll); ST.me = null; $("#stMain").hidden = true; $("#stLogin").hidden = false; setStatus($("#stLoginStatus"), ""); } }, "Đổi MSSV")));
+    el("button", { type: "button", onclick: studentLogout }, "Đăng xuất")));
   box.append(el("details", { class:"panel", id:"studentHistory" },
     el("summary", { class:"row history-toggle", style:"justify-content:space-between" }, el("h2", {}, "Lịch sử qua các tuần"), el("span", { class:"status", id:"historyStatus" }, "Đang tải lịch sử từ Google Sheet…")),
     el("div", { id:"studentHistoryContent" })));
@@ -1338,7 +1399,9 @@ function renderStudent({ carry = null } = {}) {
     if (ST.picks.some(x => x === null)) return setStatus(status, "Chọn mức cho đủ các tiêu chí.", "err");
     send.disabled = true; setStatus(status, "Đang gửi…");
     try {
-      const r = await apiPost({ action: "submitScore", sessionId: st.sessionId, round: k, raterId: me.id, presenterId: p.id, scores: ST.picks, comment: cmt.value });
+      const auth = await getStudentAuth();
+      if (!auth.currentUser) throw new Error("student_auth_required");
+      const r = await apiPost({ action: "submitScore", idToken: await auth.currentUser.getIdToken(), sessionId: st.sessionId, round: k, raterId: me.id, presenterId: p.id, scores: ST.picks, comment: cmt.value });
       if (!r.ok) throw new Error(errText(r.error));
       ST.lastSent = { sessionId:st.sessionId, round:k, presenterId:p.id, total:r.total }; ST.dirty = false;
       setStatus(status, `Đã gửi ${r.total} điểm. Cảm ơn bạn!`, "ok");
