@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Jigsaw Micro-present</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Layout: thanh điều hướng theo bước (Thiết lập → Phân công → Trình chiếu → Kết quả); trang SV (#score) là một cột cho điện thoại. */
+:root {
+  --bg: #eef2f4; --surface: #ffffff; --surface-2: #f6f8f9; --ink: #142028; --muted: #5a6872;
+  --line: #d6dee3; --accent: #0d6b74; --accent-ink: #ffffff; --warn: #b7791f; --danger: #b42318; --ok: #1e7a46;
+  --g1: #0d6b74; --g2: #b4462b; --g3: #6a4bb5; --g4: #2f7d32; --g5: #b07a00; --g6: #1d5fb4; --g7: #a3376e; --g8: #4f5d6b;
+  --font: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --radius: 10px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1418; --surface: #162026; --surface-2: #1c2830; --ink: #e5ecf0; --muted: #94a3ad;
+    --line: #2a3943; --accent: #4fb6be; --accent-ink: #062226; --warn: #e2a640; --danger: #f07a6c; --ok: #5cc28a;
+    --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e1418; --surface: #162026; --surface-2: #1c2830; --ink: #e5ecf0; --muted: #94a3ad;
+  --line: #2a3943; --accent: #4fb6be; --accent-ink: #062226; --warn: #e2a640; --danger: #f07a6c; --ok: #5cc28a;
+  --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 16px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { line-height: 1.2; text-wrap: balance; margin: 0; }
+h1 { font-size: 1.35rem; font-weight: 800; }
+h2 { font-size: 1.1rem; font-weight: 700; }
+h3 { font-size: .95rem; font-weight: 700; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.small { font-size: .85rem; }
+.label { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.num { font-variant-numeric: tabular-nums; }
+
+header.top { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+nav.tabs { display: flex; flex-wrap: wrap; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+nav.tabs a { text-decoration: none; color: var(--muted); padding: 6px 14px; border-radius: 999px; font-weight: 600; font-size: .9rem; }
+nav.tabs a.on { background: var(--accent); color: var(--accent-ink); }
+nav.tabs a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.stack { display: grid; gap: 16px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.field { display: grid; gap: 4px; }
+.field label { font-weight: 600; font-size: .88rem; }
+input, textarea, select { font: inherit; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
+textarea { min-height: 180px; resize: vertical; font-size: .9rem; line-height: 1.45; }
+input[type=number] { width: 90px; }
+button { font: inherit; font-weight: 600; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); padding: 8px 14px; cursor: pointer; }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.status { font-size: .85rem; color: var(--muted); }
+.status.ok { color: var(--ok); } .status.err { color: var(--danger); }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: .8rem; padding: 2px 9px; border-radius: 999px; color: #fff; background: var(--gc, var(--g8)); white-space: nowrap; }
+:root[data-theme="dark"] .chip { color: #0b1114; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip { color: #0b1114; } }
+
+.groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.gcard { border: 1px solid var(--line); border-top: 4px solid var(--gc); border-radius: var(--radius); background: var(--surface); padding: 12px; display: grid; gap: 8px; align-content: start; }
+.gcard .topic { font-weight: 700; }
+.gcard ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; }
+.gcard li { display: grid; grid-template-columns: 26px 1fr auto; gap: 6px; font-size: .88rem; align-items: baseline; }
+.gcard li .no { font-weight: 800; color: var(--gc); }
+.tag { font-size: .72rem; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 6px; padding: 0 6px; }
+
+.tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { background: var(--surface-2); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+td.mover { min-width: 150px; }
+
+/* Trình chiếu */
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
+@media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
+.clock { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 10px; justify-items: center; text-align: center; }
+.clock .phase { font-weight: 800; font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+.clock .phase.qa { color: var(--warn); } .clock .phase.done { color: var(--danger); }
+.clock .time { font-size: clamp(4rem, 14vw, 9.5rem); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.clock .round { font-size: 1.2rem; font-weight: 700; }
+.bar { width: 100%; height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); width: 0%; transition: width .3s linear; }
+.movers { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.mv { border: 1px solid var(--line); border-left: 6px solid var(--gc); border-radius: 8px; padding: 10px 12px; background: var(--surface); display: grid; gap: 2px; }
+.mv .who { font-weight: 700; }
+.mv .path { font-size: 1.1rem; font-weight: 800; }
+.qrbox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 8px; justify-items: center; text-align: center; align-content: start; }
+.qr { background: #fff; padding: 10px; border-radius: 8px; }
+.qr img, .qr canvas { display: block; max-width: 100%; height: auto; }
+.url { font-size: .72rem; word-break: break-all; color: var(--muted); }
+body.fs header.top, body.fs .runhide { display: none; }
+
+/* Trang SV */
+.student { max-width: 520px; margin: 0 auto; display: grid; gap: 14px; }
+.visitor { border: 1px solid var(--line); border-left: 6px solid var(--gc); border-radius: var(--radius); background: var(--surface); padding: 14px; display: grid; gap: 4px; }
+.visitor .name { font-size: 1.25rem; font-weight: 800; }
+.crit { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px; display: grid; gap: 8px; }
+.crit .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.levels button { padding: 8px 4px; font-size: .78rem; line-height: 1.25; display: grid; gap: 2px; }
+.levels button b { font-size: 1rem; font-variant-numeric: tabular-nums; }
+.levels button.sel { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.total { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 1.2rem; }
+.notice { border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px; background: var(--surface); }
+.big { font-size: 1.05rem; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== TRANG GIẢNG VIÊN ===================== -->
+<div id="teacher">
+  <header class="top">
+    <div>
+      <h1>Jigsaw Micro-present</h1>
+      <p class="muted small" id="sessionLine"></p>
+    </div>
+    <nav class="tabs" aria-label="Các bước">
+      <a href="#setup" data-tab="setup">1. Thiết lập</a>
+      <a href="#plan" data-tab="plan">2. Phân công</a>
+      <a href="#run" data-tab="run">3. Trình chiếu</a>
+      <a href="#results" data-tab="results">4. Kết quả</a>
+      <a href="#config" data-tab="config">Cài đặt</a>
+    </nav>
+  </header>
+
+  <!-- 1. Thiết lập -->
+  <section id="tab-setup" class="stack" hidden>
+    <div class="grid2">
+      <div class="panel">
+        <div class="field">
+          <label for="sessionName">Tên buổi</label>
+          <input id="sessionName" placeholder="Buổi 2 – Chatbot cho GV">
+        </div>
+        <div class="field">
+          <label for="students">Danh sách sinh viên</label>
+          <textarea id="students" placeholder="MSSV, Họ tên, Nhóm (mỗi dòng một SV)"></textarea>
+          <p class="muted small">Mỗi dòng: <b>MSSV, Họ tên, Nhóm</b> (dán thẳng 3 cột từ Excel/Google Sheet cũng được). Nhóm ghi số 1, 2, 3… hoặc N1, N2… <span id="studentCount" class="num"></span></p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="field">
+          <label for="topics">Chủ đề / công cụ (mỗi dòng một chủ đề, theo thứ tự N1, N2…)</label>
+          <textarea id="topics" style="min-height:150px"></textarea>
+        </div>
+        <div class="row">
+          <div class="field"><label for="groupCount">Số nhóm</label><input id="groupCount" type="number" min="2" max="8"></div>
+          <div class="field"><label for="rounds">Số lượt</label><input id="rounds" type="number" min="1" max="7"></div>
+          <div class="field"><label for="presentMin">Trình bày (phút)</label><input id="presentMin" type="number" min="1" max="30" step="0.5"></div>
+          <div class="field"><label for="qaMin">Hỏi đáp (phút)</label><input id="qaMin" type="number" min="0" max="15" step="0.5"></div>
+        </div>
+        <p class="muted small">Số lượt tối đa = số nhóm − 1 (khi đó nhóm nào cũng nghe đủ các chủ đề còn lại). Thành viên có số thứ tự lớn hơn số lượt sẽ ở lại làm <b>chốt</b>.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Bấm để phân công</h2>
+      <div class="row">
+        <button class="primary" id="btnChosenGroups">Dùng nhóm SV đã chọn</button>
+        <button id="btnShuffleNumbers">Giữ nhóm, xáo số thứ tự</button>
+        <button id="btnShuffleTopics">Giữ nhóm, bốc thăm chủ đề</button>
+        <button id="btnApplyTopics">Gán chủ đề theo thứ tự</button>
+        <button id="btnRandomGroups">Chia nhóm ngẫu nhiên</button>
+      </div>
+      <p class="muted small"><b>Nhóm cố định cả học kỳ:</b> thêm cột Nhóm vào danh sách (MSSV, Họ tên, Nhóm) rồi bấm “Dùng nhóm SV đã chọn”. Mỗi buổi chỉ cần dán chủ đề mới, bấm “Gán chủ đề theo thứ tự” (hoặc bốc thăm) và “xáo số thứ tự” để người đi, người làm chốt thay đổi. Danh sách và nhóm được lưu trên máy này cho các buổi sau.</p>
+      <p class="status" id="setupStatus"></p>
+    </div>
+  </section>
+
+  <!-- 2. Phân công -->
+  <section id="tab-plan" class="stack" hidden>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2>Nhóm và số thứ tự</h2>
+        <div class="row"><button class="primary" id="btnSync">Đồng bộ lên Google Sheet</button><span class="status" id="syncStatus"></span></div>
+      </div>
+      <div class="groups" id="groupCards"></div>
+    </div>
+    <div class="panel">
+      <h2>Ai đi đâu ở từng lượt</h2>
+      <p class="muted small">Quy tắc: lượt <b>k</b>, người số <b>k</b> của mỗi nhóm đi sang bàn bên phải <b>k</b> bàn và trình bày chủ đề của nhóm mình.</p>
+      <div class="tablebox"><table id="rotTable"></table></div>
+    </div>
+    <div class="panel">
+      <h2>Mỗi bàn nghe chủ đề gì</h2>
+      <div class="tablebox"><table id="hearTable"></table></div>
+    </div>
+  </section>
+
+  <!-- 3. Trình chiếu -->
+  <section id="tab-run" class="stack" hidden>
+    <div class="stage">
+      <div class="stack">
+        <div class="clock">
+          <div class="round num" id="runRound">Chuẩn bị</div>
+          <div class="phase" id="runPhase">Chưa bắt đầu</div>
+          <div class="time" id="runTime">06:00</div>
+          <div class="bar" aria-hidden="true"><i id="runBar"></i></div>
+          <div class="row runhide-not" style="justify-content:center">
+            <button id="btnPrev">◀ Lượt trước</button>
+            <button class="primary" id="btnStart">Bắt đầu</button>
+            <button id="btnReset">Đặt lại giờ</button>
+            <button class="primary" id="btnNext">Lượt tiếp ▶</button>
+            <button id="btnFs">Toàn màn hình</button>
+          </div>
+          <p class="status" id="runStatus"></p>
+        </div>
+        <div>
+          <p class="label" style="margin-bottom:8px" id="moversLabel">Người di chuyển</p>
+          <div class="movers" id="movers"></div>
+        </div>
+      </div>
+      <div class="qrbox">
+        <h3>Quét để chấm điểm</h3>
+        <div class="qr" id="qr"></div>
+        <p class="small">Nhập MSSV → chấm người đến bàn mình</p>
+        <p class="url" id="qrUrl"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Kết quả -->
+  <section id="tab-results" class="stack" hidden>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2>Điểm micro-present</h2>
+        <div class="row">
+          <button class="primary" id="btnLoadScores">Tải điểm</button>
+          <button id="btnCsv">Xuất CSV</button>
+          <span class="status" id="resStatus"></span>
+        </div>
+      </div>
+      <p class="muted small">Điểm MP = 60% trung bình điểm đồng đẳng + 40% điểm GV (nếu GV có chấm người đó; nếu không, lấy 100% điểm đồng đẳng). Thang 10.</p>
+      <div class="tablebox"><table id="resTable"></table></div>
+    </div>
+    <div class="panel">
+      <h2>Số phiếu theo lượt</h2>
+      <div class="tablebox"><table id="countTable"></table></div>
+    </div>
+    <div class="panel">
+      <h2>GV chấm xác suất</h2>
+      <div class="row">
+        <div class="field" style="min-width:120px"><label for="gvRound">Lượt</label><select id="gvRound"></select></div>
+        <div class="field" style="flex:1;min-width:220px"><label for="gvPresenter">Người trình bày</label><select id="gvPresenter"></select></div>
+      </div>
+      <div id="gvForm" class="stack"></div>
+      <div class="row"><button class="primary" id="btnGvSubmit">Lưu điểm GV</button><span class="status" id="gvStatus"></span></div>
+    </div>
+  </section>
+
+  <!-- Cài đặt -->
+  <section id="tab-config" class="stack" hidden>
+    <div class="panel">
+      <h2>Kết nối Google Sheet</h2>
+      <div class="field"><label for="apiUrl">URL Web App (Apps Script, kết thúc bằng /exec)</label><input id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
+      <div class="field" style="max-width:220px"><label for="pin">PIN giảng viên</label><input id="pin" type="password" autocomplete="off"></div>
+      <div class="row"><button class="primary" id="btnSaveCfg">Lưu & kiểm tra kết nối</button><span class="status" id="cfgStatus"></span></div>
+      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ; chỉ phần chấm điểm qua QR cần Google Sheet. URL và PIN chỉ lưu trên máy này.</p>
+    </div>
+    <div class="panel">
+      <h2>Rubric chấm micro-present</h2>
+      <p class="muted small">Sửa trong mảng <code>CONFIG.CRITERIA</code> ở đầu phần script (tối đa 4 tiêu chí, tổng 10 điểm).</p>
+      <ul id="critList" class="small"></ul>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== TRANG SINH VIÊN ===================== -->
+<div id="student" class="student" hidden>
+  <header class="top"><div><h1>Chấm micro-present</h1><p class="muted small" id="stSession"></p></div></header>
+  <div id="stLogin" class="panel">
+    <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="off" placeholder="VD: 2201001"></div>
+    <button class="primary" id="btnStLogin">Tiếp tục</button>
+    <p class="status" id="stLoginStatus"></p>
+  </div>
+  <div id="stMain" class="stack" hidden></div>
+</div>
+</div>
+
+<script>
+/* ======================= CẤU HÌNH ======================= */
+const CONFIG = {
+  API_URL: "https://script.google.com/macros/s/AKfycbzzkneA9VMDZsufXHrEjLJjHDBr7yQcR-r9Lh0lheeYIBl0hP48FcWh3pKysber-H08/exec",  // URL Web App (Apps Script)
+  CRITERIA: [
+    { name: "Hiểu biết công cụ", max: 3 },
+    { name: "Demo trên bài học thật", max: 3 },
+    { name: "Nhận định phản biện", max: 2 },
+    { name: "Trình bày & thời gian", max: 2 }
+  ],
+  LEVELS: [ ["Xuất sắc", 1], ["Tốt", 0.75], ["Đạt", 0.5], ["Cần cải thiện", 0.25] ]
+};
+
+/* ======================= TIỆN ÍCH ======================= */
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v;
+    else if (k === "style") n.setAttribute("style", v);
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c !== null && c !== undefined && c !== false) n.append(c.nodeType ? c : String(c));
+  return n;
+};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("jigsaw_" + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem("jigsaw_" + k, JSON.stringify(v)); } catch {} }
+};
+const gColor = i => `var(--g${(i % 8) + 1})`;
+const gName = i => "N" + (i + 1);
+const round2 = x => Math.round(x * 100) / 100;
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+const fmt = s => { s = Math.max(0, Math.ceil(s)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
+const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "buoi";
+const today = () => new Date().toISOString().slice(0, 10);
+const setStatus = (node, msg, kind = "") => { node.textContent = msg; node.className = "status " + kind; };
+
+function apiUrl() {
+  const p = new URLSearchParams(location.search).get("api");
+  return (p || CONFIG.API_URL || store.get("api", "")).trim();
+}
+async function apiGet(params) {
+  const u = new URL(apiUrl());
+  Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
+  const r = await fetch(u.toString());
+  return r.json();
+}
+async function apiPost(body) {
+  const r = await fetch(apiUrl(), { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
+  return r.json();
+}
+const ERR = {
+  pin_sai: "PIN không đúng.", no_session: "Chưa có buổi nào được đồng bộ.", round_not_open: "Lượt này chưa mở.",
+  rater_away: "Lượt này bạn đang đi thuyết trình nên không chấm.", wrong_presenter: "Người trình bày không khớp với phân công. Tải lại trang.",
+  rater_not_found: "Không tìm thấy MSSV trong buổi này.", presenter_not_found: "Không tìm thấy người trình bày.", bad_scores: "Điểm chưa hợp lệ."
+};
+const errText = e => ERR[e] || ("Lỗi: " + e);
+
+/* ======================= LOGIC PHÂN CÔNG ======================= */
+function parseStudents(text) {
+  const out = []; const seen = new Set(); let auto = 1;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim(); if (!line) continue;
+    let parts = line.split(/\t|;|,/).map(s => s.trim()).filter(Boolean);
+    let id, name, group = null;
+    if (parts.length >= 3 && /^(n|nhóm|nhom)?\s*\d{1,2}$/i.test(parts[parts.length - 1])) {
+      group = parseInt(parts.pop().replace(/\D/g, ""), 10);
+    }
+    if (parts.length >= 2 && /\d/.test(parts[0])) { id = parts[0]; name = parts.slice(1).join(" "); }
+    else if (parts.length >= 2 && /\d/.test(parts[parts.length - 1])) { id = parts[parts.length - 1]; name = parts.slice(0, -1).join(" "); }
+    else { name = parts.join(" "); id = "SV" + String(auto++).padStart(2, "0"); }
+    if (seen.has(id.toLowerCase())) continue;
+    seen.add(id.toLowerCase());
+    out.push({ id, name, group });
+  }
+  return out;
+}
+const parseTopics = text => text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+
+/** rotation[k] = mảng theo bàn đích: { presenterId, fromGroup } — lượt k, người số k của nhóm g đi sang bàn (g+k) mod G */
+function buildRotation(groups, rounds) {
+  const G = groups.length; const rot = {};
+  const R = Math.max(1, Math.min(rounds, G - 1));
+  for (let k = 1; k <= R; k++) {
+    const slots = new Array(G).fill(null);
+    groups.forEach((g, gi) => {
+      if (!g.members.length) return;
+      const m = g.members[(k - 1) % g.members.length];
+      slots[(gi + k) % G] = { presenterId: m.id, fromGroup: gi };
+    });
+    rot[k] = slots;
+  }
+  return { rotation: rot, rounds: R };
+}
+function memberById(st, id) {
+  const key = String(id || "").trim().toLowerCase();
+  for (let gi = 0; gi < st.groups.length; gi++) {
+    const m = st.groups[gi].members.find(x => String(x.id).toLowerCase() === key);
+    if (m) return { ...m, groupIndex: gi };
+  }
+  return null;
+}
+
+/* ======================= TRANG GIẢNG VIÊN ======================= */
+// Dữ liệu mẫu: MSSV, Họ tên, Nhóm (SV tự chọn nhóm)
+const SAMPLE_STUDENTS = [
+  "2201001, Nguyễn Minh Anh, 1",
+  "2201002, Trần Gia Bảo, 1",
+  "2201003, Lê Thảo Chi, 1",
+  "2201004, Phạm Đức Duy, 1",
+  "2201005, Võ Ngọc Hân, 1",
+  "2201006, Đặng Quốc Huy, 2",
+  "2201007, Bùi Khánh Linh, 2",
+  "2201008, Hồ Thanh Long, 2",
+  "2201009, Đỗ Phương Mai, 2",
+  "2201010, Ngô Hoàng Nam, 2",
+  "2201011, Dương Bảo Ngọc, 3",
+  "2201012, Lý Minh Nhật, 3",
+  "2201013, Mai Thu Phương, 3",
+  "2201014, Trịnh Hữu Phúc, 3",
+  "2201015, Cao Diễm Quỳnh, 3",
+  "2201016, Phan Văn Sơn, 4",
+  "2201017, Lâm Mỹ Tâm, 4",
+  "2201018, Hà Đình Thắng, 4",
+  "2201019, Tạ Anh Thư, 4",
+  "2201020, Châu Minh Trí, 4",
+  "2201021, Vũ Thùy Trang, 5",
+  "2201022, Kiều Quang Trung, 5",
+  "2201023, Lưu Hải Yến, 5",
+  "2201024, Tôn Thất Vinh, 5",
+  "2201025, Quách Ngọc Ánh, 5",
+  "2201026, Thái Gia Hưng, 6",
+  "2201027, Lạc Thu Hà, 6",
+  "2201028, Đoàn Minh Khoa, 6",
+  "2201029, Từ Bảo Trâm, 6",
+  "2201030, Giang Hữu Lộc, 6"
+].join("\n");
+const SAMPLE_TOPICS = ["ChatGPT", "Gemini", "Claude", "Copilot", "Perplexity", "NotebookLM"].join("\n");
+
+let S = store.get("state", null) || {
+  sessionName: "Buổi 2 – Chatbot cho GV (dữ liệu mẫu)", studentsText: SAMPLE_STUDENTS, topicsText: SAMPLE_TOPICS,
+  groupCount: 6, rounds: 5, presentMin: 6, qaMin: 2, groups: [], rotation: {}, roundsEff: 0, currentRound: 0, sessionId: ""
+};
+const save = () => store.set("state", S);
+
+function bindSetupInputs() {
+  const map = { sessionName: "sessionName", students: "studentsText", topics: "topicsText", groupCount: "groupCount", rounds: "rounds", presentMin: "presentMin", qaMin: "qaMin" };
+  for (const [id, key] of Object.entries(map)) {
+    const n = $("#" + id);
+    n.value = S[key];
+    n.addEventListener("input", () => {
+      S[key] = n.type === "number" ? Number(n.value) : n.value;
+      if (key === "studentsText") countStudents();
+      if (key === "presentMin" || key === "qaMin") resetTimer();
+      if (key === "sessionName") renderHeader();
+      if (key === "rounds" && S.groups.length) { recompute(); }
+      save();
+    });
+  }
+  countStudents();
+}
+function countStudents() { $("#studentCount").textContent = `Đã nhận ${parseStudents(S.studentsText).length} SV.`; }
+
+function recompute() {
+  const r = buildRotation(S.groups, S.rounds || 1);
+  S.rotation = r.rotation; S.roundsEff = r.rounds;
+  S.currentRound = Math.min(S.currentRound, S.roundsEff);
+  save(); renderPlan(); renderRun(); renderGvSelectors();
+}
+function applyTopicList(list) {
+  S.groups.forEach((g, i) => { g.topic = list[i] || ("Chủ đề " + (i + 1)); });
+}
+function newSession() {
+  S.sessionId = slug(S.sessionName) + "-" + today();
+  S.currentRound = 0;
+}
+
+/** Đặt số lượt = số nhóm − 1 để nhóm nào cũng nghe đủ các chủ đề còn lại */
+function setFullRounds(G) {
+  S.groupCount = G; S.rounds = G - 1;
+  $("#groupCount").value = G; $("#rounds").value = G - 1;
+}
+function useChosenGroups() {
+  const st = parseStudents(S.studentsText);
+  const s = $("#setupStatus");
+  const missing = st.filter(x => !x.group);
+  if (!st.length) return setStatus(s, "Chưa có danh sách sinh viên.", "err");
+  if (missing.length === st.length) return setStatus(s, "Danh sách chưa có cột Nhóm. Mỗi dòng: MSSV, Họ tên, Nhóm (vd: 2201001, Nguyễn An, 3).", "err");
+  if (missing.length) return setStatus(s, "Chưa có nhóm: " + missing.map(x => x.name).join(", "), "err");
+  const G = Math.max(...st.map(x => x.group));
+  if (G > 8) return setStatus(s, "Tối đa 8 nhóm.", "err");
+  const groups = Array.from({ length: G }, () => ({ topic: "", members: [] }));
+  st.forEach(x => groups[x.group - 1].members.push({ id: x.id, name: x.name }));
+  const small = groups.map((g, i) => g.members.length < 2 ? gName(i) : null).filter(Boolean);
+  if (small.length) return setStatus(s, `Nhóm ${small.join(", ")} có dưới 2 SV. Kiểm tra lại số nhóm.`, "err");
+  const old = S.groups;
+  S.groups = groups;
+  S.groups.forEach((g, i) => { g.topic = (old[i] && old[i].topic) || ""; });
+  applyTopicList(parseTopics(S.topicsText));
+  setFullRounds(G);
+  newSession(); recompute();
+  setStatus(s, `Đã xếp ${st.length} SV vào ${G} nhóm theo lựa chọn của SV; ${G - 1} lượt (mỗi nhóm nghe đủ ${G - 1} chủ đề còn lại).`, "ok");
+}
+function randomGroups() {
+  const st = parseStudents(S.studentsText);
+  const G = Math.max(2, Math.min(8, Number(S.groupCount) || 6));
+  if (st.length < G * 2) { setStatus($("#setupStatus"), `Cần ít nhất ${G * 2} SV cho ${G} nhóm.`, "err"); return; }
+  const groups = Array.from({ length: G }, () => ({ topic: "", members: [] }));
+  shuffle(st).forEach((s, i) => groups[i % G].members.push({ id: s.id, name: s.name }));
+  S.groups = groups;
+  applyTopicList(parseTopics(S.topicsText));
+  setFullRounds(G);
+  newSession(); recompute();
+  setStatus($("#setupStatus"), `Đã chia ngẫu nhiên ${st.length} SV thành ${G} nhóm. Xem tab Phân công.`, "ok");
+}
+function shuffleNumbers() {
+  if (!S.groups.length) return setStatus($("#setupStatus"), "Chưa có nhóm. Bấm “Xáo nhóm ngẫu nhiên” trước.", "err");
+  S.groups.forEach(g => { g.members = shuffle(g.members); });
+  newSession(); recompute();
+  setStatus($("#setupStatus"), "Đã xáo số thứ tự trong từng nhóm.", "ok");
+}
+function shuffleTopics() {
+  if (!S.groups.length) return setStatus($("#setupStatus"), "Chưa có nhóm.", "err");
+  applyTopicList(shuffle(parseTopics(S.topicsText)).slice(0, S.groups.length));
+  newSession(); recompute();
+  setStatus($("#setupStatus"), "Đã bốc thăm chủ đề cho các nhóm.", "ok");
+}
+function applyTopicsInOrder() {
+  if (!S.groups.length) return setStatus($("#setupStatus"), "Chưa có nhóm.", "err");
+  applyTopicList(parseTopics(S.topicsText));
+  newSession(); recompute();
+  setStatus($("#setupStatus"), "Đã gán chủ đề theo thứ tự N1, N2…", "ok");
+}
+
+function renderHeader() {
+  const sync = S.sessionId ? ` · mã buổi: ${S.sessionId}` : "";
+  $("#sessionLine").textContent = (S.sessionName || "") + sync;
+}
+
+function renderPlan() {
+  const box = $("#groupCards"); box.replaceChildren();
+  const R = S.roundsEff;
+  if (!S.groups.length) { box.append(el("p", { class: "muted" }, "Chưa có nhóm. Vào tab Thiết lập và bấm “Xáo nhóm ngẫu nhiên”.")); }
+  S.groups.forEach((g, gi) => {
+    const ol = el("ol");
+    g.members.forEach((m, mi) => {
+      const no = mi + 1;
+      const role = no <= R ? `đi lượt ${no}` : "chốt";
+      ol.append(el("li", {}, el("span", { class: "no num" }, no + "."), el("span", {}, m.name), el("span", { class: "tag" }, role)));
+    });
+    box.append(el("div", { class: "gcard", style: `--gc:${gColor(gi)}` },
+      el("div", { class: "row", style: "justify-content:space-between" }, el("span", { class: "chip", style: `--gc:${gColor(gi)}` }, "Bàn " + gName(gi)), el("span", { class: "muted small" }, g.members.length + " SV")),
+      el("div", { class: "topic" }, g.topic), ol));
+  });
+
+  // Bảng ai đi đâu
+  const t = $("#rotTable"); t.replaceChildren();
+  if (!S.groups.length) return;
+  const head = el("tr", {}, el("th", {}, "Lượt"), S.groups.map((g, gi) => el("th", {}, `Từ ${gName(gi)} (${g.topic})`)));
+  t.append(el("thead", {}, head));
+  const tb = el("tbody");
+  for (let k = 1; k <= R; k++) {
+    const cells = S.groups.map((g, gi) => {
+      const slot = S.rotation[k].find(s => s && s.fromGroup === gi);
+      const dest = S.rotation[k].indexOf(slot);
+      const m = memberById(S, slot.presenterId);
+      return el("td", { class: "mover" }, el("div", {}, m.name), el("span", { class: "chip", style: `--gc:${gColor(dest)}` }, "→ " + gName(dest)));
+    });
+    tb.append(el("tr", {}, el("td", { class: "num" }, el("b", {}, k)), cells));
+  }
+  t.append(tb);
+
+  // Bảng mỗi bàn nghe gì
+  const h = $("#hearTable"); h.replaceChildren();
+  const hh = el("tr", {}, el("th", {}, "Bàn"), Array.from({ length: R }, (_, i) => el("th", {}, "Lượt " + (i + 1))), el("th", {}, "Không nghe"));
+  h.append(el("thead", {}, hh));
+  const hb = el("tbody");
+  S.groups.forEach((g, gi) => {
+    const heard = new Set([gi]);
+    const cells = [];
+    for (let k = 1; k <= R; k++) {
+      const s = S.rotation[k][gi];
+      if (s) { heard.add(s.fromGroup); cells.push(el("td", {}, S.groups[s.fromGroup].topic, el("span", { class: "muted small" }, " (" + gName(s.fromGroup) + ")"))); }
+      else cells.push(el("td", { class: "muted" }, "—"));
+    }
+    const missed = S.groups.map((x, i) => heard.has(i) ? null : x.topic).filter(Boolean);
+    hb.append(el("tr", {}, el("td", {}, el("span", { class: "chip", style: `--gc:${gColor(gi)}` }, gName(gi)), " ", g.topic), cells, el("td", { class: "muted" }, missed.join(", ") || "—")));
+  });
+  h.append(hb);
+}
+
+async function syncState(quiet) {
+  const st = $("#syncStatus");
+  if (!S.groups.length) return setStatus(st, "Chưa có phân công.", "err");
+  if (!apiUrl()) return setStatus(st, "Chưa có URL Web App (tab Cài đặt).", "err");
+  if (!S.sessionId) newSession();
+  const payload = {
+    sessionId: S.sessionId, sessionName: S.sessionName, rounds: S.roundsEff, currentRound: S.currentRound,
+    criteria: CONFIG.CRITERIA, rotation: S.rotation,
+    groups: S.groups.map(g => ({ topic: g.topic, members: g.members.map(m => ({ id: m.id, name: m.name })) }))
+  };
+  if (!quiet) setStatus(st, "Đang đồng bộ…");
+  try {
+    const r = await apiPost({ action: "setState", pin: store.get("pin", ""), state: payload });
+    if (!r.ok) throw new Error(errText(r.error));
+    S.synced = true; save(); renderHeader();
+    setStatus(st, "Đã đồng bộ lúc " + new Date().toLocaleTimeString("vi-VN"), "ok");
+    return true;
+  } catch (e) { setStatus(st, e.message || "Không kết nối được.", "err"); return false; }
+}
+
+/* ---------- Trình chiếu + đồng hồ ---------- */
+const T = { phase: "idle", endAt: 0, remain: 0, running: false, tick: null };
+let audioCtx = null;
+function beep(times = 1) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    for (let i = 0; i < times; i++) {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audioCtx.destination);
+      const t0 = audioCtx.currentTime + i * 0.35;
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.3, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.25);
+      o.start(t0); o.stop(t0 + 0.27);
+    }
+  } catch {}
+}
+const presentSec = () => Math.round((Number(S.presentMin) || 6) * 60);
+const qaSec = () => Math.round((Number(S.qaMin) || 0) * 60);
+function resetTimer() {
+  clearInterval(T.tick); T.running = false; T.phase = "present"; T.remain = presentSec();
+  renderClock();
+}
+function startPause() {
+  if (S.currentRound === 0) { goRound(1); }
+  if (T.phase === "done") resetTimer();
+  if (T.running) { T.remain = (T.endAt - Date.now()) / 1000; T.running = false; clearInterval(T.tick); }
+  else { beep(1); T.endAt = Date.now() + T.remain * 1000; T.running = true; clearInterval(T.tick); T.tick = setInterval(tick, 250); }
+  renderClock();
+}
+function tick() {
+  const left = (T.endAt - Date.now()) / 1000;
+  if (left <= 0) {
+    if (T.phase === "present" && qaSec() > 0) { T.phase = "qa"; T.remain = qaSec(); T.endAt = Date.now() + T.remain * 1000; beep(2); }
+    else { T.phase = "done"; T.remain = 0; T.running = false; clearInterval(T.tick); beep(3); }
+  } else T.remain = left;
+  renderClock();
+}
+function renderClock() {
+  const ph = $("#runPhase");
+  const labels = { present: "Trình bày", qa: "Hỏi đáp & chấm điểm", done: "Hết giờ – về bàn / chuyển lượt", idle: "Chưa bắt đầu" };
+  ph.textContent = S.currentRound === 0 ? "Chưa bắt đầu" : labels[T.phase];
+  ph.className = "phase " + (T.phase === "qa" ? "qa" : T.phase === "done" ? "done" : "");
+  $("#runTime").textContent = fmt(T.remain);
+  const total = T.phase === "qa" ? qaSec() : presentSec();
+  $("#runBar").style.width = (T.phase === "done" ? 100 : total ? (100 * (1 - T.remain / total)) : 0) + "%";
+  $("#btnStart").textContent = T.running ? "Tạm dừng" : (S.currentRound === 0 ? "Bắt đầu lượt 1" : "Bắt đầu");
+}
+async function goRound(k) {
+  S.currentRound = Math.max(0, Math.min(k, S.roundsEff)); save();
+  resetTimer(); renderRun();
+  if (apiUrl() && S.synced) {
+    try {
+      const r = await apiPost({ action: "setRound", pin: store.get("pin", ""), sessionId: S.sessionId, round: S.currentRound });
+      setStatus($("#runStatus"), r.ok ? `Đã mở lượt ${S.currentRound} cho SV chấm.` : errText(r.error), r.ok ? "ok" : "err");
+    } catch { setStatus($("#runStatus"), "Không gửi được lượt lên Google Sheet.", "err"); }
+  } else if (apiUrl()) {
+    setStatus($("#runStatus"), "Chưa đồng bộ phân công: vào tab Phân công → Đồng bộ.", "err");
+  }
+}
+function renderRun() {
+  const k = S.currentRound, R = S.roundsEff;
+  $("#runRound").textContent = k === 0 ? `Chuẩn bị · ${R} lượt` : `Lượt ${k} / ${R}`;
+  const box = $("#movers"); box.replaceChildren();
+  if (!S.groups.length) { box.append(el("p", { class: "muted" }, "Chưa có phân công.")); return; }
+  const show = k === 0 ? 1 : k;
+  $("#moversLabel").textContent = k === 0 ? "Lượt 1 sẽ di chuyển" : `Lượt ${k}: người số ${k} của mỗi nhóm di chuyển`;
+  S.rotation[show].forEach((slot, dest) => {
+    if (!slot) return;
+    const m = memberById(S, slot.presenterId);
+    box.append(el("div", { class: "mv", style: `--gc:${gColor(slot.fromGroup)}` },
+      el("div", { class: "path" }, `${gName(slot.fromGroup)} → ${gName(dest)}`),
+      el("div", { class: "who" }, m.name), el("div", { class: "muted small" }, S.groups[slot.fromGroup].topic)));
+  });
+  renderClock();
+}
+function studentUrl() {
+  const u = new URL(location.href);
+  u.hash = "score";
+  const api = apiUrl();
+  if (api && !CONFIG.API_URL) u.searchParams.set("api", api); else u.searchParams.delete("api");
+  return u.toString();
+}
+function renderQr() {
+  const box = $("#qr"); box.replaceChildren();
+  const url = studentUrl();
+  $("#qrUrl").textContent = url;
+  if (window.QRCode) new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  else box.append(el("p", { class: "small" }, "Không tải được thư viện QR. Gửi link bên dưới cho SV."));
+}
+
+/* ---------- Kết quả ---------- */
+let SCORES = [];
+async function loadScores() {
+  const st = $("#resStatus");
+  if (!apiUrl()) return setStatus(st, "Chưa có URL Web App.", "err");
+  setStatus(st, "Đang tải…");
+  try {
+    const r = await apiGet({ action: "scores", pin: store.get("pin", ""), sessionId: S.sessionId });
+    if (!r.ok) throw new Error(errText(r.error));
+    SCORES = r.rows; renderResults();
+    setStatus(st, `${SCORES.length} phiếu.`, "ok");
+  } catch (e) { setStatus(st, e.message || "Không tải được.", "err"); }
+}
+function aggregate() {
+  const map = new Map();
+  S.groups.forEach((g, gi) => g.members.forEach(m => map.set(String(m.id), { id: m.id, name: m.name, group: gName(gi), topic: g.topic, peer: [], gv: [] })));
+  for (const r of SCORES) {
+    const p = map.get(String(r.presenterId)); if (!p) continue;
+    (r.role === "teacher" ? p.gv : p.peer).push(Number(r.total));
+  }
+  const avg = a => a.length ? round2(a.reduce((x, y) => x + y, 0) / a.length) : null;
+  return [...map.values()].map(p => {
+    const pa = avg(p.peer), ga = avg(p.gv);
+    const final = pa === null && ga === null ? null : ga === null ? pa : pa === null ? ga : round2(0.6 * pa + 0.4 * ga);
+    return { ...p, n: p.peer.length, peerAvg: pa, gvAvg: ga, final };
+  });
+}
+function renderResults() {
+  const rows = aggregate();
+  const t = $("#resTable"); t.replaceChildren();
+  t.append(el("thead", {}, el("tr", {}, ["Nhóm", "MSSV", "Họ tên", "Chủ đề", "Số phiếu", "TB đồng đẳng", "GV", "Điểm MP"].map(h => el("th", {}, h)))));
+  const tb = el("tbody");
+  rows.forEach(r => tb.append(el("tr", {},
+    el("td", {}, r.group), el("td", { class: "num" }, r.id), el("td", {}, r.name), el("td", {}, r.topic),
+    el("td", { class: "num" }, r.n), el("td", { class: "num" }, r.peerAvg ?? "—"), el("td", { class: "num" }, r.gvAvg ?? "—"),
+    el("td", { class: "num" }, el("b", {}, r.final ?? "—")))));
+  t.append(tb);
+
+  const c = $("#countTable"); c.replaceChildren();
+  c.append(el("thead", {}, el("tr", {}, el("th", {}, "Lượt"), S.groups.map((g, gi) => el("th", {}, "Bàn " + gName(gi))))));
+  const cb = el("tbody");
+  for (let k = 1; k <= S.roundsEff; k++) {
+    cb.append(el("tr", {}, el("td", {}, el("b", {}, k)), S.groups.map((g, gi) => {
+      const slot = S.rotation[k][gi]; if (!slot) return el("td", { class: "muted" }, "—");
+      const away = new Set(S.rotation[k].filter(Boolean).map(s => String(s.presenterId)));
+      const expected = g.members.filter(m => !away.has(String(m.id))).length;
+      const got = SCORES.filter(r => Number(r.round) === k && r.role !== "teacher" && String(r.presenterId) === String(slot.presenterId)).length;
+      return el("td", { class: "num" }, `${got}/${expected}`);
+    })));
+  }
+  c.append(cb);
+}
+function exportCsv() {
+  const rows = aggregate();
+  const lines = [["Buoi", "Nhom", "MSSV", "Ho ten", "Chu de", "So phieu", "TB dong dang", "GV", "Diem MP"]];
+  rows.forEach(r => lines.push([S.sessionName, r.group, r.id, r.name, r.topic, r.n, r.peerAvg ?? "", r.gvAvg ?? "", r.final ?? ""]));
+  const csv = "﻿" + lines.map(l => l.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const a = el("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: `diem-mp-${S.sessionId || "buoi"}.csv` });
+  document.body.append(a); a.click(); a.remove();
+}
+
+/* ---------- Form rubric (dùng chung GV & SV) ---------- */
+function rubricForm(container, onChange) {
+  const picks = CONFIG.CRITERIA.map(() => null);
+  container.replaceChildren();
+  const total = el("div", { class: "total" }, el("span", {}, "Tổng"), el("span", { class: "num" }, "– / 10"));
+  CONFIG.CRITERIA.forEach((c, ci) => {
+    const btns = CONFIG.LEVELS.map(([lab, f], li) => {
+      const b = el("button", { type: "button", "aria-pressed": "false" }, el("b", {}, round2(c.max * f)), lab);
+      b.addEventListener("click", () => {
+        picks[ci] = round2(c.max * f);
+        btns.forEach((x, xi) => { x.classList.toggle("sel", xi === li); x.setAttribute("aria-pressed", xi === li ? "true" : "false"); });
+        const done = picks.every(p => p !== null);
+        total.lastChild.textContent = done ? round2(picks.reduce((a, x) => a + x, 0)) + " / 10" : "– / 10";
+        onChange && onChange(picks);
+      });
+      return b;
+    });
+    container.append(el("div", { class: "crit" }, el("div", { class: "head" }, el("b", {}, c.name), el("span", { class: "muted small" }, "tối đa " + c.max + " đ")), el("div", { class: "levels" }, btns)));
+  });
+  container.append(total);
+  return picks;
+}
+
+/* ---------- GV chấm ---------- */
+let gvPicks = [];
+function renderGvSelectors() {
+  const rs = $("#gvRound"); rs.replaceChildren();
+  for (let k = 1; k <= S.roundsEff; k++) rs.append(el("option", { value: k }, "Lượt " + k));
+  rs.value = Math.max(1, S.currentRound || 1);
+  fillGvPresenters();
+  gvPicks = rubricForm($("#gvForm"));
+}
+function fillGvPresenters() {
+  const ps = $("#gvPresenter"); ps.replaceChildren();
+  const k = Number($("#gvRound").value);
+  (S.rotation[k] || []).forEach((slot, dest) => {
+    if (!slot) return;
+    const m = memberById(S, slot.presenterId);
+    ps.append(el("option", { value: m.id }, `${m.name} · ${S.groups[slot.fromGroup].topic} (tại ${gName(dest)})`));
+  });
+}
+async function submitGv() {
+  const st = $("#gvStatus");
+  if (gvPicks.some(p => p === null)) return setStatus(st, "Chọn mức cho đủ các tiêu chí.", "err");
+  if (!apiUrl()) return setStatus(st, "Chưa có URL Web App.", "err");
+  try {
+    const r = await apiPost({ action: "teacherScore", pin: store.get("pin", ""), sessionId: S.sessionId, round: Number($("#gvRound").value), presenterId: $("#gvPresenter").value, scores: gvPicks });
+    if (!r.ok) throw new Error(errText(r.error));
+    setStatus(st, `Đã lưu ${r.total} điểm.`, "ok");
+    gvPicks = rubricForm($("#gvForm"));
+  } catch (e) { setStatus(st, e.message, "err"); }
+}
+
+/* ---------- Cài đặt ---------- */
+async function saveCfg() {
+  const st = $("#cfgStatus");
+  store.set("api", $("#apiUrl").value.trim()); store.set("pin", $("#pin").value);
+  renderQr();
+  if (!apiUrl()) return setStatus(st, "Đã lưu (chưa có URL).");
+  setStatus(st, "Đang kiểm tra…");
+  try { const r = await apiGet({ action: "ping" }); setStatus(st, r.ok ? "Kết nối tốt." : "Phản hồi lạ từ Web App.", r.ok ? "ok" : "err"); }
+  catch { setStatus(st, "Không kết nối được. Kiểm tra quyền truy cập Web App là “Anyone”.", "err"); }
+}
+
+/* ---------- Điều hướng ---------- */
+const TABS = ["setup", "plan", "run", "results", "config"];
+function route() {
+  const h = location.hash.replace("#", "");
+  if (h === "score") { $("#teacher").hidden = true; $("#student").hidden = false; initStudent(); return; }
+  if (!teacherReady) initTeacher();
+  $("#teacher").hidden = false; $("#student").hidden = true;
+  const tab = TABS.includes(h) ? h : "setup";
+  TABS.forEach(t => { $("#tab-" + t).hidden = t !== tab; });
+  document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
+  if (tab === "run") { renderRun(); renderQr(); }
+  if (tab === "results") renderResults();
+}
+
+let teacherReady = false;
+function initTeacher() {
+  teacherReady = true;
+  bindSetupInputs();
+  $("#apiUrl").value = store.get("api", CONFIG.API_URL); $("#pin").value = store.get("pin", "");
+  $("#critList").replaceChildren(...CONFIG.CRITERIA.map(c => el("li", {}, `${c.name} – ${c.max} điểm`)));
+  $("#btnRandomGroups").onclick = randomGroups;
+  $("#btnChosenGroups").onclick = useChosenGroups;
+  $("#btnShuffleNumbers").onclick = shuffleNumbers;
+  $("#btnShuffleTopics").onclick = shuffleTopics;
+  $("#btnApplyTopics").onclick = applyTopicsInOrder;
+  $("#btnSync").onclick = () => syncState(false);
+  $("#btnStart").onclick = startPause;
+  $("#btnReset").onclick = resetTimer;
+  $("#btnNext").onclick = () => goRound(S.currentRound + 1);
+  $("#btnPrev").onclick = () => goRound(S.currentRound - 1);
+  $("#btnFs").onclick = () => {
+    document.body.classList.toggle("fs");
+    const d = document.documentElement;
+    if (!document.fullscreenElement && d.requestFullscreen) d.requestFullscreen().catch(() => {});
+    else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  };
+  document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) document.body.classList.remove("fs"); });
+  $("#btnLoadScores").onclick = loadScores;
+  $("#btnCsv").onclick = exportCsv;
+  $("#gvRound").onchange = fillGvPresenters;
+  $("#btnGvSubmit").onclick = submitGv;
+  $("#btnSaveCfg").onclick = saveCfg;
+  if (!S.groups.length) useChosenGroups();  // mở ra đã có phân công mẫu
+  else recompute();
+  renderHeader(); resetTimer(); renderGvSelectors();
+}
+
+/* ======================= TRANG SINH VIÊN ======================= */
+let ST = { state: null, me: null, poll: null, round: -1, picks: [], dirty: false };
+function initStudent() {
+  if (ST.inited) return; ST.inited = true;
+  $("#stId").value = store.get("stId", "");
+  $("#btnStLogin").onclick = studentLogin;
+  $("#stId").addEventListener("keydown", e => { if (e.key === "Enter") studentLogin(); });
+  if (!apiUrl()) { setStatus($("#stLoginStatus"), "Trang chưa được kết nối với Google Sheet. Báo GV kiểm tra link QR.", "err"); $("#btnStLogin").disabled = true; }
+  else if ($("#stId").value) studentLogin();
+}
+async function fetchState() {
+  const r = await apiGet({ action: "state" });
+  if (!r.ok) throw new Error(errText(r.error));
+  return r.state;
+}
+async function studentLogin() {
+  const id = $("#stId").value.trim(); const s = $("#stLoginStatus");
+  if (!id) return setStatus(s, "Nhập MSSV.", "err");
+  setStatus(s, "Đang tải…");
+  try {
+    const state = await fetchState();
+    const me = memberById(state, id);
+    if (!me) return setStatus(s, "Không tìm thấy MSSV này trong buổi " + state.sessionName + ".", "err");
+    store.set("stId", id);
+    ST.state = state; ST.me = me; ST.round = -1;
+    if (state.criteria && state.criteria.length) CONFIG.CRITERIA = state.criteria;
+    $("#stLogin").hidden = true; $("#stMain").hidden = false;
+    renderStudent();
+    clearInterval(ST.poll); ST.poll = setInterval(pollState, 8000);
+  } catch (e) { setStatus(s, e.message || "Không kết nối được.", "err"); }
+}
+async function pollState() {
+  try {
+    const state = await fetchState();
+    const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound;
+    ST.state = state;
+    if (changed && !ST.dirty) renderStudent();
+    else if (changed) $("#stNewRound") && ($("#stNewRound").hidden = false);
+  } catch {}
+}
+function renderStudent() {
+  const st = ST.state, me = memberById(st, ST.me.id);
+  const box = $("#stMain"); box.replaceChildren(); ST.dirty = false;
+  $("#stSession").textContent = st.sessionName;
+  if (!me) { box.append(el("div", { class: "notice" }, "Buổi hiện tại không có MSSV của bạn.")); return; }
+  ST.me = me;
+  const g = st.groups[me.groupIndex];
+  box.append(el("div", { class: "panel" },
+    el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, me.name), el("span", { class: "chip", style: `--gc:${gColor(me.groupIndex)}` }, "Bàn " + gName(me.groupIndex))),
+    el("p", { class: "muted small" }, `Nhóm bạn trình bày: ${g.topic}`),
+    el("button", { type: "button", onclick: () => { clearInterval(ST.poll); ST.me = null; $("#stMain").hidden = true; $("#stLogin").hidden = false; setStatus($("#stLoginStatus"), ""); } }, "Đổi MSSV")));
+
+  const k = Number(st.currentRound);
+  const refresh = el("button", { type: "button", onclick: async () => { try { ST.state = await fetchState(); renderStudent(); } catch {} } }, "Tải lại");
+  if (!k) { box.append(el("div", { class: "notice" }, el("p", { class: "big" }, "Chưa bắt đầu lượt nào."), el("p", { class: "muted small" }, "Trang tự cập nhật khi GV mở lượt 1."), refresh)); return; }
+
+  const slots = st.rotation[String(k)] || [];
+  const myTrip = slots.findIndex(s => s && String(s.presenterId).toLowerCase() === String(me.id).toLowerCase());
+  if (myTrip !== -1) {
+    box.append(el("div", { class: "visitor", style: `--gc:${gColor(myTrip)}` },
+      el("span", { class: "label" }, `Lượt ${k} / ${st.rounds}`),
+      el("p", { class: "name" }, `Bạn đi trình bày ở bàn ${gName(myTrip)}`),
+      el("p", { class: "muted" }, `Chủ đề: ${g.topic}. Lượt này bạn không chấm điểm.`)));
+    box.append(refresh); return;
+  }
+  const slot = slots[me.groupIndex];
+  if (!slot) { box.append(el("div", { class: "notice" }, `Lượt ${k}: không có khách đến bàn bạn.`), refresh); return; }
+  const p = memberById(st, slot.presenterId);
+  box.append(el("div", { class: "visitor", style: `--gc:${gColor(slot.fromGroup)}` },
+    el("span", { class: "label" }, `Lượt ${k} / ${st.rounds} · khách từ bàn ${gName(slot.fromGroup)}`),
+    el("p", { class: "name" }, p.name),
+    el("p", { class: "muted" }, "Chủ đề: " + st.groups[slot.fromGroup].topic)));
+
+  const newRound = el("div", { class: "notice", id: "stNewRound", hidden: true }, "GV đã chuyển lượt. ", el("button", { type: "button", onclick: renderStudent }, "Sang lượt mới"));
+  box.append(newRound);
+  const formBox = el("div", { class: "stack" });
+  box.append(formBox);
+  const key = `sent_${st.sessionId}_${k}`;
+  const prev = store.get(key, null);
+  ST.picks = rubricForm(formBox, () => { ST.dirty = true; });
+  const cmt = el("textarea", { id: "stComment", maxlength: "300", placeholder: "Góp ý ngắn (không bắt buộc)", style: "min-height:70px" });
+  const status = el("p", { class: "status" }, prev ? `Bạn đã gửi ${prev} điểm cho lượt này. Gửi lại sẽ thay điểm cũ.` : "");
+  const send = el("button", { class: "primary", type: "button" }, "Gửi điểm");
+  send.onclick = async () => {
+    if (ST.picks.some(x => x === null)) return setStatus(status, "Chọn mức cho đủ các tiêu chí.", "err");
+    send.disabled = true; setStatus(status, "Đang gửi…");
+    try {
+      const r = await apiPost({ action: "submitScore", sessionId: st.sessionId, round: k, raterId: me.id, presenterId: p.id, scores: ST.picks, comment: cmt.value });
+      if (!r.ok) throw new Error(errText(r.error));
+      store.set(key, r.total); ST.dirty = false;
+      setStatus(status, `Đã gửi ${r.total} điểm. Cảm ơn bạn!`, "ok");
+    } catch (e) { setStatus(status, e.message || "Gửi không được, thử lại.", "err"); }
+    send.disabled = false;
+  };
+  box.append(el("div", { class: "field" }, el("label", { for: "stComment" }, "Góp ý"), cmt), send, status);
+}
+
+/* ======================= KHỞI ĐỘNG ======================= */
+window.addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
