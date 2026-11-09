@@ -184,22 +184,23 @@ body.fs .qrbox { padding:20px; }
 }
 body { background: var(--bg); }
 .wrap { max-width: 1680px; padding: 22px 26px 48px; }
-#teacher { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: 24px; align-items: start; }
-header.top {
-  grid-column: 1; grid-row: 1; position: sticky; top: 20px; z-index: 10;
-  min-height: calc(100vh - 40px); margin: 0; padding: 24px 18px;
-  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 24px;
+#teacher { display: block; }
+#teacher > header.top {
+  position: relative; top: auto; z-index: 10; min-height: 0; margin: 0 0 22px; padding: 18px 22px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand controls" "nav nav";
+  align-items: center; gap: 14px 20px;
   background: var(--surface); border: 1px solid var(--line); border-radius: 26px; box-shadow: var(--shadow-soft);
 }
-header.top h1 { font-size: 1.13rem; letter-spacing: -.035em; }
-header.top #sessionLine { margin-top: 8px; padding: 9px 10px; background: var(--surface-2); border-radius: 12px; line-height: 1.5; }
-.toolbar-controls { order: 3; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.toolbar-controls select { min-width: 0; padding: 8px; border-radius: 12px; }
-nav.tabs { order: 2; display: grid; gap: 6px; padding: 0; border: 0; border-radius: 0; background: transparent; }
-nav.tabs a { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 10px 12px; border-radius: 14px; color: var(--muted); font-size: .9rem; }
-nav.tabs a:hover { background: var(--surface-2); color: var(--ink); }
-nav.tabs a.on { background: var(--mint); color: var(--ink); box-shadow: inset 3px 0 var(--accent); }
-#teacher > section { grid-column: 2; grid-row: 1; min-width: 0; }
+#teacher > header.top > div:first-child { grid-area: brand; }
+#teacher > header.top h1 { font-size: 1.13rem; letter-spacing: -.035em; }
+#teacher > header.top #sessionLine { margin-top: 8px; padding: 7px 10px; background: var(--surface-2); border-radius: 12px; line-height: 1.5; }
+#teacher .toolbar-controls { grid-area: controls; order: 0; display: flex; gap: 8px; }
+#teacher .toolbar-controls select { min-width: 112px; padding: 8px 10px; border-radius: 12px; }
+#teacher nav.tabs { grid-area: nav; order: 0; display: flex; justify-content: flex-start; overflow-x: auto; gap: 6px; margin: 2px -4px -4px; padding: 4px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface-2); }
+#teacher nav.tabs a { display: flex; align-items: center; min-height: 44px; padding: 9px 16px; border-radius: 12px; white-space: nowrap; color: var(--muted); font-size: .9rem; }
+#teacher nav.tabs a:hover { background: var(--surface); color: var(--ink); }
+#teacher nav.tabs a.on { background: var(--surface); color: var(--ink); box-shadow: inset 0 -3px var(--accent); }
+#teacher > section { min-width: 0; }
 .panel, .clock, .visitor, .crit, .gcard, .mv, .qrbox { border-radius: 22px; box-shadow: var(--shadow-soft); }
 .panel { padding: 22px; gap: 16px; border-color: transparent; }
 .panel h2 { font-size: 1.14rem; letter-spacing: -.02em; }
@@ -240,22 +241,49 @@ input, textarea, select { border-color: var(--line); }
 body.fs .wrap { padding: 12px 20px; }
 @media (max-width: 1040px) {
   .wrap { padding: 16px 18px 36px; }
-  #teacher { grid-template-columns: 206px minmax(0, 1fr); gap: 16px; }
-  header.top { padding: 18px 12px; border-radius: 20px; }
+  #teacher > header.top { padding: 16px 18px; border-radius: 20px; }
 }
 @media (max-width: 760px) {
-  #teacher { display: block; }
-  header.top { position: static; min-height: 0; margin-bottom: 16px; padding: 16px; gap: 12px; }
-  nav.tabs { display: flex; overflow-x: auto; padding: 4px; margin: 0 -4px; }
-  nav.tabs a { min-height: 42px; white-space: nowrap; padding: 8px 12px; }
-  nav.tabs a.on { box-shadow: inset 0 -3px var(--accent); }
-  .toolbar-controls { display: flex; }
-  .toolbar-controls select { flex: 1; }
+  #teacher > header.top { display: flex; flex-wrap: wrap; position: static; min-height: 0; margin-bottom: 16px; padding: 14px; gap: 12px; }
+  #teacher > header.top > div:first-child { flex: 1 1 180px; }
+  #teacher .toolbar-controls { flex: 0 0 auto; }
+  #teacher .toolbar-controls select { min-width: 0; }
+  #teacher nav.tabs { flex: 1 1 100%; overflow-x: auto; margin: 0 -4px; padding: 4px; }
+  #teacher nav.tabs a { min-height: 42px; padding: 8px 12px; }
   #teacher > section { margin-top: 14px; }
 }
 @media (max-width: 640px) {
   .wrap { padding: 12px 14px 34px; }
   .panel { padding: 16px; border-radius: 18px; }
+}
+@media (min-width: 761px) {
+  body.fs .wrap { width: 100vw; height: 100dvh; max-width: none; margin: 0; padding: 12px 18px; }
+  body.fs #teacher { height: 100%; }
+  body.fs #teacher > section { height: 100%; }
+  body.fs #tab-run { height: 100%; min-height: 0; gap: 0; overflow: hidden; }
+  body.fs #tab-run .stage { height: 100%; min-height: 0; grid-template-areas: "clock qr" "movers movers"; grid-template-columns: minmax(0, 1fr) minmax(380px, 31vw); grid-template-rows: minmax(0, 1fr) minmax(150px, 27vh); gap: 14px 18px; }
+  body.fs #tab-run .stage > .stack:first-child { display: contents; }
+  body.fs #tab-run .stage > .stack:first-child > .clock { grid-area: clock; min-height: 0; padding: 14px clamp(20px, 2vw, 36px); gap: 8px; }
+  body.fs #tab-run .stage > .stack:first-child > div:not(.clock) { grid-area: movers; min-width: 0; }
+  body.fs #tab-run .stage > .qrbox { grid-area: qr; position: static; min-width: 0; display: grid; align-content: center; justify-items: center; }
+  body.fs #movers { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  body.fs .mv { min-width: 0; padding: 12px 14px; }
+  body.fs .qrbox { padding: 18px; }
+}
+@media (min-width: 761px) and (max-width: 1240px) {
+  body.fs #tab-run .stage { grid-template-columns: minmax(0, 1fr) minmax(310px, 32vw); }
+  body.fs #movers { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  body.fs .wrap { min-height: 100dvh; height: auto; padding: 10px; }
+  body.fs #teacher, body.fs #teacher > section, body.fs #tab-run { height: auto; }
+  body.fs #tab-run { overflow: visible; }
+  body.fs #tab-run .stage { display: grid; height: auto; grid-template-areas: "clock" "qr" "movers"; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; }
+  body.fs #tab-run .stage > .stack:first-child { display: contents; }
+  body.fs #tab-run .stage > .stack:first-child > .clock { grid-area: clock; }
+  body.fs #tab-run .stage > .stack:first-child > div:not(.clock) { grid-area: movers; }
+  body.fs #tab-run .stage > .qrbox { grid-area: qr; }
+  body.fs #movers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
 }
 </style>
 </head>
@@ -433,7 +461,7 @@ body.fs .wrap { padding: 12px 20px; }
       <div class="field"><label for="apiUrl">URL Web App (Apps Script, kết thúc bằng /exec)</label><input id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
       <div class="field" style="max-width:220px"><label for="pin">PIN giảng viên</label><input id="pin" type="password" autocomplete="off"></div>
       <div class="row"><button class="primary" id="btnSaveCfg">Lưu & kiểm tra kết nối</button><span class="status" id="cfgStatus"></span></div>
-      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần có Script Property FIREBASE_API_KEY và Firebase Auth phải cho phép tên miền l2practice.github.io. URL và PIN chỉ lưu trên máy này.</p>
+      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần Firebase API key và email domain riêng của Jigsaw; Firebase Auth phải cho phép tên miền GitHub Pages của ứng dụng. URL và PIN chỉ lưu trên máy này.</p>
     </div>
     <p class="muted small">Rubric chấm điểm nằm ở tab Thiết lập và có thể đổi theo từng buổi.</p>
   </section>
@@ -455,9 +483,9 @@ body.fs .wrap { padding: 12px 20px; }
     </div>
   </header>
   <div id="stLogin" class="panel">
-    <div><p class="label">Tài khoản sinh viên</p><h2>Đăng nhập để chấm điểm</h2><p class="muted small">Dùng MSSV và mật khẩu tài khoản ArticuWrite của bạn.</p></div>
+    <div><p class="label">Tài khoản sinh viên</p><h2>Đăng nhập để chấm điểm</h2><p class="muted small">Dùng MSSV và mật khẩu Jigsaw do giảng viên cấp.</p></div>
     <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="username" placeholder="VD: 2201001"></div>
-    <div class="field"><label for="stPassword">Mật khẩu</label><input id="stPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu tài khoản ArticuWrite"></div>
+    <div class="field"><label for="stPassword">Mật khẩu</label><input id="stPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu tài khoản Jigsaw"></div>
     <button class="primary" id="btnStLogin">Đăng nhập</button>
     <p class="status" id="stLoginStatus"></p>
   </div>
@@ -481,14 +509,15 @@ const CONFIG = {
     delivery: "Hiểu biết công cụ | 2\nDemo trên bài học thật | 2\nNhận định phản biện | 1.5\nQuản lý thời gian (time management) | 1\nGiọng nói rõ ràng (clear voice) | 1\nÂm lượng vừa đủ nghe (loud enough) | 1\nLưu loát (fluency) | 1.5"
   }
 };
-// Student accounts use the same Firebase Authentication project as ArticuWrite.
+// Dedicated Jigsaw Firebase project settings. Fill these after creating the project.
+// Do not point this app at a different app's Firebase project.
 // Passwords and auth tokens are never written to localStorage.
 const STUDENT_FIREBASE = {
-  apiKey: "AIzaSyCj8WTr6eaqMGhqKltiZ9444LELV-7ZDIw",
-  authDomain: "articuwrite.firebaseapp.com",
-  projectId: "articuwrite"
+  apiKey: "",
+  authDomain: "",
+  projectId: ""
 };
-const STUDENT_EMAIL_DOMAIN = "students.articuwrite.app";
+const STUDENT_EMAIL_DOMAIN = "";
 let studentAuthPromise = null;
 function loadScriptOnce(src) {
   return new Promise((resolve, reject) => {
@@ -499,6 +528,8 @@ function loadScriptOnce(src) {
   });
 }
 async function getStudentAuth() {
+  if (!STUDENT_FIREBASE.apiKey || !STUDENT_FIREBASE.authDomain || !STUDENT_FIREBASE.projectId || !STUDENT_EMAIL_DOMAIN)
+    throw new Error("Firebase riêng cho Jigsaw chưa được cấu hình.");
   if (!studentAuthPromise) {
     const base = "https://www.gstatic.com/firebasejs/10.12.2/";
     studentAuthPromise = (async () => {
@@ -548,17 +579,17 @@ const EN = {
   "Nhóm và số thứ tự":"Groups and presenter order","Đồng bộ lên Google Sheet":"Sync to Google Sheet","Ai đi đâu ở từng lượt":"Who goes where each round","Mỗi bàn nghe chủ đề gì":"Topics heard at each table",
   "Điểm micro-present":"Micro-present scores","Tải điểm":"Load scores","Xuất CSV":"Export CSV","Số phiếu theo lượt":"Ratings by round","GV chấm xác suất":"Teacher scoring",
   "Kết nối Google Sheet":"Google Sheet connection","URL Web App (Apps Script, kết thúc bằng /exec)":"Web App URL (Apps Script, ending in /exec)","PIN giảng viên":"Teacher PIN","Lưu & kiểm tra kết nối":"Save & test connection",
-  "Chấm micro-present":"Micro-present rating","Mã số sinh viên":"Student ID","Tiếp tục":"Continue","Đăng nhập":"Sign in","Đăng xuất":"Sign out","Mật khẩu":"Password","Đăng nhập để chấm điểm":"Sign in to rate","Tài khoản sinh viên":"Student account","Dùng MSSV và mật khẩu tài khoản ArticuWrite của bạn.":"Use your Student ID and ArticuWrite password.","Mật khẩu tài khoản ArticuWrite":"ArticuWrite password","Đổi MSSV":"Change student ID","Tải lại":"Refresh",
-  "Đăng nhập an toàn để chấm và xem lịch sử điểm":"Sign in securely to rate and view your score history","Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần có Script Property FIREBASE_API_KEY và Firebase Auth phải cho phép tên miền l2practice.github.io. URL và PIN chỉ lưu trên máy này.":"Assignments and the timer work offline. For secure student sign-in, Apps Script needs the FIREBASE_API_KEY Script Property and Firebase Auth must authorize l2practice.github.io. The URL and PIN are saved on this device.",
+  "Chấm micro-present":"Micro-present rating","Mã số sinh viên":"Student ID","Tiếp tục":"Continue","Đăng nhập":"Sign in","Đăng xuất":"Sign out","Mật khẩu":"Password","Đăng nhập để chấm điểm":"Sign in to rate","Tài khoản sinh viên":"Student account","Dùng MSSV và mật khẩu Jigsaw do giảng viên cấp.":"Use the Jigsaw Student ID and password provided by your instructor.","Mật khẩu tài khoản Jigsaw":"Jigsaw account password","Firebase riêng cho Jigsaw chưa được cấu hình.":"Jigsaw's Firebase project has not been configured.","Đổi MSSV":"Change student ID","Tải lại":"Refresh",
+  "Đăng nhập an toàn để chấm và xem lịch sử điểm":"Sign in securely to rate and view your score history","Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần Firebase API key và email domain riêng của Jigsaw; Firebase Auth phải cho phép tên miền GitHub Pages của ứng dụng. URL và PIN chỉ lưu trên máy này.":"Assignments and the timer work offline. For secure student sign-in, Apps Script needs Jigsaw's Firebase API key and student email domain; Firebase Auth must authorize this GitHub Pages domain. The URL and PIN are saved on this device.",
   "Góp ý ngắn (không bắt buộc)":"Short comment (optional)","Góp ý":"Comment","Gửi điểm":"Submit rating","Tổng":"Total","Đã chấm":"Rated","tiêu chí":"criteria","tối đa ":"max "," đ":" pts",
   "Xuất sắc":"Excellent","Tốt":"Good","Đạt":"Fair","Cần cải thiện":"Needs improvement",
   "Quét để chấm điểm":"Scan to rate","Nhập MSSV → chấm người đến bàn mình":"Enter your student ID, then rate your table's presenter","Người di chuyển":"Presenters moving","Chuẩn bị":"Ready","Chưa bắt đầu":"Not started",
   "Bắt đầu":"Start","Bắt đầu lượt 1":"Start round 1","Bắt đầu lượt 1?":"Start round 1?","Tạm dừng":"Pause","Lượt trước":"Previous round","Lượt tiếp":"Next round","Đặt lại giờ":"Reset timer","Toàn màn hình":"Full screen",
   "Trình bày":"Presenting","Hỏi đáp & chấm điểm":"Q&A & rating","Hết giờ – về bàn / chuyển lượt":"Time's up — return / change round","Hết giờ":"Time's up","Lượt ":"Round "," lượt":" rounds"," phút":" min",
-  "Bàn ":"Table ","Chưa có phân công.":"No assignments yet.","Lượt 1 sẽ di chuyển":"Round 1 presenters","Chủ đề:":"Topic:",
+  "Bàn ":"Table ","Nhóm mục tiêu":"Destination group","Chưa có phân công.":"No assignments yet.","Lượt 1 sẽ di chuyển":"Round 1 presenters","Chủ đề:":"Topic:",
   "Bạn đi trình bày ở bàn ":"You are presenting at Table ","Bạn đang chấm người trình bày ở bàn mình":"You are rating the presenter at your table","Bạn đã gửi":"You submitted","điểm cho lượt này. Gửi lại sẽ thay điểm cũ.":" points this round. Resubmitting replaces the earlier rating.",
   "Đã gửi ":"Submitted "," điểm. Cảm ơn bạn!":" points. Thank you!","Chọn mức cho đủ các tiêu chí.":"Choose a level for every criterion.","Đang gửi…":"Submitting…","Đang tải…":"Loading…",
-  "Nhập MSSV.":"Enter your student ID.","Nhập mật khẩu.":"Enter your password.","MSSV hoặc mật khẩu không đúng.":"Student ID or password is incorrect.","Tên miền này chưa được bật đăng nhập Firebase. Báo giảng viên thêm l2practice.github.io vào Authorized domains.":"Firebase sign-in is not enabled for this domain. Ask your instructor to add l2practice.github.io to Authorized domains.","Vui lòng đăng nhập lại.":"Please sign in again.","Phiên đăng nhập hết hạn. Hãy đăng nhập lại.":"Your session expired. Please sign in again.","Tài khoản này không có quyền truy cập.":"This account is not authorized.","Firebase chưa được cấu hình trong Apps Script.":"Firebase is not configured in Apps Script.","Đăng nhập nhiều lần không thành công. Vui lòng đợi rồi thử lại.":"Too many sign-in attempts. Please wait and try again.","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không kết nối được.":"Could not connect.","Lượt này bạn không chấm điểm.":"You do not rate anyone this round.",
+  "Nhập MSSV.":"Enter your student ID.","Nhập mật khẩu.":"Enter your password.","MSSV hoặc mật khẩu không đúng.":"Student ID or password is incorrect.","Tên miền này chưa được bật đăng nhập Firebase. Báo giảng viên thêm l2practice.github.io vào Authorized domains.":"Firebase sign-in is not enabled for this domain. Ask your instructor to add l2practice.github.io to Authorized domains.","Vui lòng đăng nhập lại.":"Please sign in again.","Phiên đăng nhập hết hạn. Hãy đăng nhập lại.":"Your session expired. Please sign in again.","Tài khoản này không có quyền truy cập.":"This account is not authorized.","Firebase chưa được cấu hình trong Apps Script.":"Firebase is not configured in Apps Script.","Firebase riêng cho Jigsaw chưa được cấu hình.":"Jigsaw's Firebase project has not been configured.","Đăng nhập nhiều lần không thành công. Vui lòng đợi rồi thử lại.":"Too many sign-in attempts. Please wait and try again.","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không kết nối được.":"Could not connect.","Lượt này bạn không chấm điểm.":"You do not rate anyone this round.",
   "GV đã chuyển lượt. ":"The teacher moved to a new round. ","Sang lượt mới":"Go to new round","Điểm nhận được":"Points received","Lượt bạn đã bình chọn":"Your ratings","Lịch sử qua các tuần":"Your history","Đang tải lịch sử từ Google Sheet…":"Loading history from Google Sheet…",
   "Chưa có lịch sử điểm.":"No score history yet.","Chưa thể tải lịch sử điểm.":"Score history is not available right now.","Người trình bày":"Presenter","Điểm":"Score","Tuần":"Session","Bạn đã bình chọn":"You rated","Bạn nhận được":"You received","phiếu":"ratings",
   "Đã đồng bộ":"Synced","Chưa đồng bộ":"Not synced","Mã buổi":"Session code","Đồng bộ lúc ":"Synced at ","Đang đồng bộ…":"Syncing…",
@@ -1001,7 +1032,7 @@ function renderRun() {
     box.append(el("div", { class: "mv", style: `--gc:${gColor(dest)}` },
       el("div", { class: "path" }, `${gName(slot.fromGroup)} → ${gName(dest)}`),
       el("div", { class: "who" }, m.name),
-      el("span", { class:"chip", style:`--gc:${gColor(dest)}` }, `Bàn đích ${gName(dest)}`),
+      el("span", { class:"chip", style:`--gc:${gColor(dest)}` }, `Nhóm mục tiêu ${gName(dest)}`),
       el("div", { class: "muted small" }, S.groups[slot.fromGroup].topic)));
   });
   renderClock();
