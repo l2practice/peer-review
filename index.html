@@ -634,7 +634,7 @@ function bindSetupInputs() {
       S[key] = n.type === "number" ? Number(n.value) : n.value;
       if (key === "studentsText") countStudents();
       if (key === "presentMin" || key === "qaMin") resetTimer();
-      if (key === "sessionName") renderHeader();
+      if (["sessionName","studentsText","topicsText","groupCount","rounds"].includes(key)) { S.synced = false; renderHeader(); }
       if (key === "rounds" && S.groups.length) { recompute(); }
       save();
     });
@@ -1062,9 +1062,9 @@ function initTeacher() {
     if (typeof gvPicks !== "undefined" && $("#gvForm")) gvPicks = rubricForm($("#gvForm"));
   };
   critBox.value = S.criteriaText;
-  critBox.addEventListener("input", () => { S.criteriaText = critBox.value; save(); applyCriteria(); });
-  $("#btnPresetMP").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.mp; save(); applyCriteria(); };
-  $("#btnPresetDelivery").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.delivery; save(); applyCriteria(); };
+  critBox.addEventListener("input", () => { S.criteriaText = critBox.value; S.synced = false; renderHeader(); save(); applyCriteria(); });
+  $("#btnPresetMP").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.mp; S.synced = false; renderHeader(); save(); applyCriteria(); };
+  $("#btnPresetDelivery").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.delivery; S.synced = false; renderHeader(); save(); applyCriteria(); };
   applyCriteria();
   $("#btnRandomGroups").onclick = randomGroups;
   $("#btnChosenGroups").onclick = useChosenGroups;
