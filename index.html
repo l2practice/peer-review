@@ -592,7 +592,8 @@ async function syncState(quiet) {
   const st = $("#syncStatus");
   if (!S.groups.length) return setStatus(st, "Chưa có phân công.", "err");
   if (!apiUrl()) return setStatus(st, "Chưa có URL Web App (tab Cài đặt).", "err");
-  if (!S.sessionId) newSession();
+  // Đổi tên buổi (tuần mới) → mã buổi mới, điểm tuần mới không lẫn với tuần cũ
+  if (!S.sessionId || !S.sessionId.startsWith(slug(S.sessionName) + "-")) { newSession(); renderRun(); }
   const payload = {
     sessionId: S.sessionId, sessionName: S.sessionName, rounds: S.roundsEff, currentRound: S.currentRound,
     criteria: CONFIG.CRITERIA, rotation: S.rotation,
