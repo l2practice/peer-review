@@ -11,24 +11,24 @@
 <style>
 /* Layout: thanh điều hướng theo bước (Thiết lập → Phân công → Trình chiếu → Kết quả); trang SV (#score) là một cột cho điện thoại. */
 :root {
-  --bg: #eef2f4; --surface: #ffffff; --surface-2: #f6f8f9; --ink: #142028; --muted: #5a6872;
-  --line: #d6dee3; --accent: #0d6b74; --accent-ink: #ffffff; --warn: #b7791f; --danger: #b42318; --ok: #1e7a46;
-  --g1: #0d6b74; --g2: #b4462b; --g3: #6a4bb5; --g4: #2f7d32; --g5: #b07a00; --g6: #1d5fb4; --g7: #a3376e; --g8: #4f5d6b;
+  --bg: #e5efeb; --surface: #ffffff; --surface-2: #f4f8f6; --ink: #17231f; --muted: #4c5e57;
+  --line: #c7d5cf; --accent: #28736a; --accent-ink: #ffffff; --warn: #865900; --danger: #a52a20; --ok: #17643d;
+  --g1: #26766e; --g2: #af4938; --g3: #64519d; --g4: #39733d; --g5: #916300; --g6: #315e95; --g7: #964567; --g8: #4c5d57;
   --font: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
   --radius: 10px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1418; --surface: #162026; --surface-2: #1c2830; --ink: #e5ecf0; --muted: #94a3ad;
-    --line: #2a3943; --accent: #4fb6be; --accent-ink: #062226; --warn: #e2a640; --danger: #f07a6c; --ok: #5cc28a;
+    --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --ink: #eef5f1; --muted: #b5c4bd;
+    --line: #3a4a43; --accent: #83cfc0; --accent-ink: #10231e; --warn: #f0c46c; --danger: #ff9386; --ok: #76d69f;
     --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0e1418; --surface: #162026; --surface-2: #1c2830; --ink: #e5ecf0; --muted: #94a3ad;
-  --line: #2a3943; --accent: #4fb6be; --accent-ink: #062226; --warn: #e2a640; --danger: #f07a6c; --ok: #5cc28a;
+  --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --ink: #eef5f1; --muted: #b5c4bd;
+  --line: #3a4a43; --accent: #83cfc0; --accent-ink: #10231e; --warn: #f0c46c; --danger: #ff9386; --ok: #76d69f;
   --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
   color-scheme: dark;
 }
@@ -36,7 +36,7 @@
 [hidden] { display: none !important; }
 html, body { margin: 0; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); }
-.wrap { max-width: 1180px; margin: 0 auto; padding-block: 16px 48px;
+.wrap { max-width: 1440px; margin: 0 auto; padding-block: 20px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1, h2, h3 { line-height: 1.2; text-wrap: balance; margin: 0; }
 h1 { font-size: 1.35rem; font-weight: 800; }
@@ -54,16 +54,20 @@ nav.tabs a { text-decoration: none; color: var(--muted); padding: 6px 14px; bord
 nav.tabs a.on { background: var(--accent); color: var(--accent-ink); }
 nav.tabs a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 12px; min-width: 0; box-shadow: 0 8px 24px rgba(31,57,47,.055); }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .stack { display: grid; gap: 16px; }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar-controls { display:flex; gap:8px; align-items:center; }
+.toolbar-controls select { width:auto; min-width:112px; min-height:42px; padding:7px 10px; font-size:.86rem; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .field { display: grid; gap: 4px; }
 .field label { font-weight: 600; font-size: .88rem; }
 input, textarea, select { font: inherit; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; width: 100%; }
 textarea { min-height: 180px; resize: vertical; font-size: .9rem; line-height: 1.45; }
 input[type=number] { width: 90px; }
-button { font: inherit; font-weight: 600; border-radius: 8px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); padding: 8px 14px; cursor: pointer; }
+button { font: inherit; font-weight: 600; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink); padding: 8px 14px; cursor: pointer; min-height:44px; transition: background-color .15s ease, border-color .15s ease, transform .15s ease; }
+button:not(:disabled):active { transform: translateY(1px); }
 button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 .status { font-size: .85rem; color: var(--muted); }
@@ -89,38 +93,74 @@ tr:last-child td { border-bottom: 0; }
 td.mover { min-width: 150px; }
 
 /* Trình chiếu */
-.stage { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 360px); gap: 20px; }
 @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
-.clock { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 10px; justify-items: center; text-align: center; }
-.clock .phase { font-weight: 800; font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+.clock { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: clamp(24px,3vw,42px); display: grid; gap: 14px; justify-items: center; text-align: center; }
+.clock .phase { font-weight: 800; font-size: clamp(1.5rem,2.5vw,2.2rem); letter-spacing: .015em; color: var(--ok); }
 .clock .phase.qa { color: var(--warn); } .clock .phase.done { color: var(--danger); }
-.clock .time { font-size: clamp(4rem, 14vw, 9.5rem); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.clock .round { font-size: 1.2rem; font-weight: 700; }
+.clock .time { font-size: clamp(7rem, 17vw, 13.5rem); font-weight: 800; line-height: .96; font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
+.clock .round { font-size: clamp(1.6rem,2.7vw,2.5rem); font-weight: 800; }
 .bar { width: 100%; height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
 .bar i { display: block; height: 100%; background: var(--accent); width: 0%; transition: width .3s linear; }
-.movers { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
-.mv { border: 1px solid var(--line); border-left: 6px solid var(--gc); border-radius: 8px; padding: 10px 12px; background: var(--surface); display: grid; gap: 2px; }
+.movers { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.mv { border: 1px solid var(--line); border-left: 8px solid var(--gc); border-radius: 12px; padding: 14px 16px; background: var(--surface); display: grid; gap: 4px; }
 .mv .who { font-weight: 700; }
-.mv .path { font-size: 1.1rem; font-weight: 800; }
+.mv .path { font-size: clamp(1.2rem,1.55vw,1.65rem); font-weight: 800; }
+.mv .who { font-size: clamp(1.1rem,1.35vw,1.45rem); }
 .qrbox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 8px; justify-items: center; text-align: center; align-content: start; }
-.qr { background: #fff; padding: 10px; border-radius: 8px; }
+.qr { background: #fff; padding: 14px; border-radius: 12px; }
 .qr img, .qr canvas { display: block; max-width: 100%; height: auto; }
 .url { font-size: .72rem; word-break: break-all; color: var(--muted); }
 body.fs header.top, body.fs .runhide { display: none; }
 
 /* Trang SV */
-.student { max-width: 520px; margin: 0 auto; display: grid; gap: 14px; }
+.student { max-width: 560px; margin: 0 auto; display: grid; gap: 14px; padding-bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
 .visitor { border: 1px solid var(--line); border-left: 6px solid var(--gc); border-radius: var(--radius); background: var(--surface); padding: 14px; display: grid; gap: 4px; }
-.visitor .name { font-size: 1.25rem; font-weight: 800; }
+.visitor .name { font-size: 1.35rem; font-weight: 800; }
 .crit { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px; display: grid; gap: 8px; }
 .crit .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.crit .head b { font-size:1rem; }
 .levels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-.levels button { padding: 8px 4px; font-size: .78rem; line-height: 1.25; display: grid; gap: 2px; }
+.levels button { min-height:68px; padding: 8px 4px; font-size: .76rem; line-height: 1.25; display: grid; gap: 3px; }
 .levels button b { font-size: 1rem; font-variant-numeric: tabular-nums; }
 .levels button.sel { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .total { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 1.2rem; }
 .notice { border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px; background: var(--surface); }
 .big { font-size: 1.05rem; font-weight: 700; }
+.st-progress { position:sticky; top:8px; z-index:4; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 12px; box-shadow:0 5px 18px rgba(20,40,31,.09); }
+.st-progress-head { display:flex; justify-content:space-between; gap:12px; align-items:center; font-weight:700; }
+.st-progress .bar { height:7px; margin-top:7px; }
+.st-submitbar { position:sticky; bottom:0; z-index:5; margin:0 -4px; padding:10px 4px max(10px,env(safe-area-inset-bottom,0px)); background:color-mix(in srgb,var(--bg) 88%,transparent); backdrop-filter:blur(12px); }
+.st-submitbar button { width:100%; min-height:54px; font-size:1.05rem; }
+.st-history-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.history-toggle { cursor:pointer; list-style:none; }
+.history-toggle::-webkit-details-marker { display:none; }
+.history-list { display:grid; gap:8px; }
+.history-item { padding:10px 12px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); display:grid; gap:2px; }
+.history-item b { font-variant-numeric:tabular-nums; }
+.history-points { font-size:1.25rem; font-weight:800; }
+body.fs .wrap { max-width:none; padding:12px 20px; }
+body.fs .stage { grid-template-columns:minmax(0,1fr) minmax(300px,24vw); gap:20px; }
+body.fs .qrbox { position:sticky; top:12px; }
+body.fs .qr canvas, body.fs .qr img { width:min(32vh,340px) !important; height:min(32vh,340px) !important; }
+body.fs .clock { background:#252827; color:#f7f7f4; border-color:#414542; }
+body.fs .mv { background:#222826; color:#f6f8f6; border-color:#444e49; }
+body.fs .mv .muted { color:#d2ddd6; }
+body.fs #runStatus { display:none; }
+body.fs .qrbox { padding:20px; }
+@media (min-width:1200px) { body:not(.fs) #tab-run .stage { grid-template-columns:minmax(0,1fr) 350px; } }
+@media (max-width:640px) {
+  .wrap { padding-top:12px; }
+  header.top { align-items:flex-start; }
+  .toolbar-controls { width:100%; }
+  .toolbar-controls select { flex:1; }
+  .panel { padding:14px; border-radius:14px; }
+  .grid2 { grid-template-columns:1fr; }
+  .st-history-grid { grid-template-columns:1fr; }
+  .levels { gap:8px; }
+  .levels button { min-height:72px; font-size:.73rem; }
+  .st-submitbar { margin:0 -16px; padding-inline:16px; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -133,6 +173,16 @@ body.fs header.top, body.fs .runhide { display: none; }
     <div>
       <h1>Jigsaw Micro-present</h1>
       <p class="muted small" id="sessionLine"></p>
+    </div>
+    <div class="toolbar-controls" aria-label="Giao diện">
+      <label class="sr-only" for="languageSelect">Ngôn ngữ</label>
+      <select id="languageSelect" aria-label="Ngôn ngữ">
+        <option value="vi">Tiếng Việt</option><option value="en">English</option>
+      </select>
+      <label class="sr-only" for="themeSelect">Giao diện sáng tối</label>
+      <select id="themeSelect" aria-label="Giao diện sáng tối">
+        <option value="auto">Theo thiết bị</option><option value="light">Sáng</option><option value="dark">Tối</option>
+      </select>
     </div>
     <nav class="tabs" aria-label="Các bước">
       <a href="#setup" data-tab="setup">1. Thiết lập</a>
@@ -296,7 +346,19 @@ body.fs header.top, body.fs .runhide { display: none; }
 
 <!-- ===================== TRANG SINH VIÊN ===================== -->
 <div id="student" class="student" hidden>
-  <header class="top"><div><h1>Chấm micro-present</h1><p class="muted small" id="stSession"></p></div></header>
+  <header class="top">
+    <div><h1>Chấm micro-present</h1><p class="muted small" id="stSession"></p></div>
+    <div class="toolbar-controls" aria-label="Giao diện">
+      <label class="sr-only" for="stLanguageSelect">Ngôn ngữ</label>
+      <select id="stLanguageSelect" aria-label="Ngôn ngữ">
+        <option value="vi">Tiếng Việt</option><option value="en">English</option>
+      </select>
+      <label class="sr-only" for="stThemeSelect">Giao diện sáng tối</label>
+      <select id="stThemeSelect" aria-label="Giao diện sáng tối">
+        <option value="auto">Theo thiết bị</option><option value="light">Sáng</option><option value="dark">Tối</option>
+      </select>
+    </div>
+  </header>
   <div id="stLogin" class="panel">
     <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="off" placeholder="VD: 2201001"></div>
     <button class="primary" id="btnStLogin">Tiếp tục</button>
@@ -344,6 +406,90 @@ const to10 = (picks, list) => Math.round(picks.reduce((a, x) => a + x, 0) / crit
 
 /* ======================= TIỆN ÍCH ======================= */
 const $ = (s, r = document) => r.querySelector(s);
+const EN = {
+  "Các bước":"Workflow steps","1. Thiết lập":"1. Setup","2. Phân công":"2. Plan","3. Trình chiếu":"3. Present","4. Kết quả":"4. Results","Cài đặt":"Settings",
+  "Ngôn ngữ":"Language","Giao diện":"Appearance","Giao diện sáng tối":"Color theme","Theo thiết bị":"System","Sáng":"Light","Tối":"Dark",
+  "Tên buổi":"Session name","Danh sách sinh viên":"Student list","Chủ đề / công cụ (mỗi dòng một chủ đề, theo thứ tự N1, N2…)":"Topics / tools (one per line, in N1, N2… order)",
+  "Số nhóm":"Groups","Số lượt":"Rounds","Trình bày (phút)":"Presentation (min)","Hỏi đáp (phút)":"Q&A (min)",
+  "Rubric chấm của buổi này":"Session rubric","Mẫu MP (4 tiêu chí)":"Micro-present preset (4 criteria)","Mẫu MP + kỹ năng trình bày (7 tiêu chí)":"Micro-present + presentation skills (7 criteria)",
+  "Mỗi dòng một tiêu chí: ":"One criterion per line: ","Tên tiêu chí | điểm tối đa":"Criterion | maximum points","Bấm để phân công":"Create assignments",
+  "Dùng nhóm SV đã chọn":"Use student groups","Giữ nhóm, xáo số thứ tự":"Keep groups, shuffle order","Giữ nhóm, bốc thăm chủ đề":"Keep groups, shuffle topics","Gán chủ đề theo thứ tự":"Assign topics in order","Chia nhóm ngẫu nhiên":"Shuffle students into groups",
+  "Nhóm và số thứ tự":"Groups and presenter order","Đồng bộ lên Google Sheet":"Sync to Google Sheet","Ai đi đâu ở từng lượt":"Who goes where each round","Mỗi bàn nghe chủ đề gì":"Topics heard at each table",
+  "Điểm micro-present":"Micro-present scores","Tải điểm":"Load scores","Xuất CSV":"Export CSV","Số phiếu theo lượt":"Ratings by round","GV chấm xác suất":"Teacher scoring",
+  "Kết nối Google Sheet":"Google Sheet connection","URL Web App (Apps Script, kết thúc bằng /exec)":"Web App URL (Apps Script, ending in /exec)","PIN giảng viên":"Teacher PIN","Lưu & kiểm tra kết nối":"Save & test connection",
+  "Chấm micro-present":"Micro-present rating","Mã số sinh viên":"Student ID","Tiếp tục":"Continue","Đổi MSSV":"Change student ID","Tải lại":"Refresh",
+  "Góp ý ngắn (không bắt buộc)":"Short comment (optional)","Góp ý":"Comment","Gửi điểm":"Submit rating","Tổng":"Total","Đã chấm":"Rated","tiêu chí":"criteria","tối đa ":"max "," đ":" pts",
+  "Xuất sắc":"Excellent","Tốt":"Good","Đạt":"Fair","Cần cải thiện":"Needs improvement",
+  "Quét để chấm điểm":"Scan to rate","Nhập MSSV → chấm người đến bàn mình":"Enter your student ID, then rate your table's presenter","Người di chuyển":"Presenters moving","Chuẩn bị":"Ready","Chưa bắt đầu":"Not started",
+  "Bắt đầu":"Start","Bắt đầu lượt 1":"Start round 1","Bắt đầu lượt 1?":"Start round 1?","Tạm dừng":"Pause","Lượt trước":"Previous round","Lượt tiếp":"Next round","Đặt lại giờ":"Reset timer","Toàn màn hình":"Full screen",
+  "Trình bày":"Presenting","Hỏi đáp & chấm điểm":"Q&A & rating","Hết giờ – về bàn / chuyển lượt":"Time's up — return / change round","Hết giờ":"Time's up","Lượt ":"Round "," lượt":" rounds"," phút":" min",
+  "Bàn ":"Table ","Chưa có phân công.":"No assignments yet.","Lượt 1 sẽ di chuyển":"Round 1 presenters","Chủ đề:":"Topic:",
+  "Bạn đi trình bày ở bàn ":"You are presenting at Table ","Bạn đang chấm người trình bày ở bàn mình":"You are rating the presenter at your table","Bạn đã gửi":"You submitted","điểm cho lượt này. Gửi lại sẽ thay điểm cũ.":" points this round. Resubmitting replaces the earlier rating.",
+  "Đã gửi ":"Submitted "," điểm. Cảm ơn bạn!":" points. Thank you!","Chọn mức cho đủ các tiêu chí.":"Choose a level for every criterion.","Đang gửi…":"Submitting…","Đang tải…":"Loading…",
+  "Nhập MSSV.":"Enter your student ID.","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không kết nối được.":"Could not connect.","Lượt này bạn không chấm điểm.":"You do not rate anyone this round.",
+  "GV đã chuyển lượt. ":"The teacher moved to a new round. ","Sang lượt mới":"Go to new round","Điểm nhận được":"Points received","Lượt bạn đã bình chọn":"Your ratings","Lịch sử qua các tuần":"Your history","Đang tải lịch sử từ Google Sheet…":"Loading history from Google Sheet…",
+  "Chưa có lịch sử điểm.":"No score history yet.","Chưa thể tải lịch sử điểm.":"Score history is not available right now.","Người trình bày":"Presenter","Điểm":"Score","Tuần":"Session","Bạn đã bình chọn":"You rated","Bạn nhận được":"You received","phiếu":"ratings",
+  "Đã đồng bộ":"Synced","Chưa đồng bộ":"Not synced","Mã buổi":"Session code","Đồng bộ lúc ":"Synced at ","Đang đồng bộ…":"Syncing…",
+  "Kết nối tốt.":"Connection is working.","Đã lưu (chưa có URL).":"Saved (no URL yet).","Đang kiểm tra…":"Checking connection…","Phản hồi lạ từ Web App.":"Unexpected response from the Web App.",
+  "Chưa có URL Web App.":"No Web App URL configured.","Không tải được.":"Could not load.","Không gửi được lượt lên Google Sheet.":"Could not send the round to Google Sheet.","Chưa có buổi nào được đồng bộ.":"No session has been synced.","Lượt này chưa mở.":"This round is not open yet.","PIN không đúng.":"Incorrect PIN.","Không tìm thấy MSSV trong buổi này.":"Student ID not found in this session.","Không tìm thấy người trình bày.":"Presenter not found.","Điểm chưa hợp lệ.":"Invalid score.","Chưa đồng bộ phân công: vào tab Phân công → Đồng bộ.":"Assignments are not synced. Open Plan → Sync.",
+  "Số phiếu":"Ratings","TB đồng đẳng":"Peer average","Nhóm":"Group","Họ tên":"Name","Chủ đề":"Topic","Lượt":"Round","Không nghe":"Not heard","GV":"Teacher","Điểm MP":"Micro-present score"
+};
+Object.assign(EN, {
+  "Tiến độ chấm":"Rating progress","Bản nháp điểm của bạn vẫn được giữ.":"Your rating draft is saved.","Sang lượt mới, hãy kiểm tra lại các mức điểm trước khi gửi cho người trình bày mới.":"When you move to the new round, review the saved levels before sending them for the new presenter.","Sang lượt mới, giữ lựa chọn":"Move to new round and keep choices",
+  "Đã xếp":"Assigned "," SV vào ":" students to "," nhóm theo lựa chọn của SV; ":" groups as selected; "," lượt (mỗi nhóm nghe đủ ":" rounds (each group hears all "," chủ đề còn lại).":" remaining topics).",
+  "Đã chia ngẫu nhiên ":"Randomly assigned "," thành ":" into "," nhóm. Xem tab Phân công.":" groups. See Plan.","Đã xáo số thứ tự trong từng nhóm.":"Shuffled presenter order within each group.","Đã bốc thăm chủ đề cho các nhóm.":"Randomly assigned topics to groups.","Đã gán chủ đề theo thứ tự N1, N2…":"Assigned topics in N1, N2… order.",
+  "Chưa có danh sách sinh viên.":"No student list yet.","Danh sách chưa có cột Nhóm.":"The list does not include a Group column.","Chưa có nhóm.":"No groups yet.","Tối đa 8 nhóm.":"A maximum of 8 groups is supported.","có dưới 2 SV. Kiểm tra lại số nhóm.":"has fewer than 2 students. Check the group count.","Không có kết nối thì vẫn dùng được phần phân công và đồng hồ; chỉ phần chấm điểm qua QR cần Google Sheet. URL và PIN chỉ lưu trên máy này.":"Assignments and the timer work without a connection. Google Sheet is only needed for QR ratings. The URL and PIN are saved on this device.",
+  "Quy tắc: ":"Rule: ","người số ":"presenter ","của mỗi nhóm di chuyển":"from each group moves"," đi sang bàn bên phải ":" moves "," bàn và trình bày chủ đề của nhóm mình.":" tables to present their group's topic.",
+  "Mỗi dòng:":"Each line:","(dán thẳng 3 cột từ Excel/Google Sheet cũng được). Nhóm ghi số 1, 2, 3… hoặc N1, N2…":"(you can paste three columns from Excel or Google Sheets). Use 1, 2, 3… or N1, N2… for groups.","Đã nhận ":"Read "," SV.":" students.",
+  "Số lượt tối đa = số nhóm − 1 (khi đó nhóm nào cũng nghe đủ các chủ đề còn lại). Thành viên có số thứ tự lớn hơn số lượt sẽ ở lại làm ":"Maximum rounds = groups − 1 (so each group hears every other topic). Members whose order is higher than the round count stay at their table as ","chốt":"home presenters",
+  "Mỗi tiêu chí có 4 mức: ":"Each criterion has four levels: "," (100%), ":" (100%), "," (75%), ":" (75%), "," (50%), ":" (50%), "," (25%). Tổng điểm luôn được quy về thang 10. Đổi rubric xong nhớ bấm ":" (25%). The final score is scaled to 10. After changing the rubric, click "," ở tab Phân công để trang chấm của SV cập nhật; mỗi buổi giữ rubric riêng của buổi đó.":" in Plan to update student rating pages. Each session keeps its own rubric.",
+  "Nhóm cố định cả học kỳ:":"Keep groups for the full semester:","Số lượt tối đa = số nhóm − 1":"Maximum rounds = groups − 1","khi đó nhóm nào cũng nghe đủ các chủ đề còn lại":"so each group hears every other topic","Thành viên có số thứ tự lớn hơn số lượt sẽ ở lại làm":"Members whose order is higher than the round count stay at their table as","Mỗi dòng:":"Each line:","MSSV, Họ tên, Nhóm":"Student ID, Name, Group","dán thẳng 3 cột từ Excel/Google Sheet cũng được":"you can paste three columns from Excel or Google Sheets","Nhóm ghi số 1, 2, 3… hoặc N1, N2…":"Use 1, 2, 3… or N1, N2… for groups","Số lượt tối đa = số nhóm − 1":"Maximum rounds = groups − 1"," thêm cột Nhóm vào danh sách (MSSV, Họ tên, Nhóm) rồi bấm “":" add a Group column to the list (Student ID, Name, Group), then click “","”. Mỗi buổi chỉ cần dán chủ đề mới, bấm “":"”. For each session, paste new topics, click “","” (hoặc bốc thăm) và “":"” (or randomize them), then “","” để người đi, người làm chốt thay đổi. Danh sách và nhóm được lưu trên máy này cho các buổi sau.":"” so presenters and home presenters rotate. The list and groups are saved on this device for later sessions.",
+  "Không tải được thư viện QR. Gửi link bên dưới cho SV.":"Could not load the QR library. Share the link below with students.","Trang tự cập nhật khi GV mở lượt 1.":"This page updates when the teacher opens Round 1.","Chưa bắt đầu lượt nào.":"No round has started yet.","Bạn đi trình bày ở bàn":"You are presenting at Table","Bạn không chấm điểm":"You are not rating anyone.","Nhóm bạn trình bày: ":"Your group presents: ","Khách từ bàn ":"Presenter from Table ","Chủ đề: ":"Topic: ","Bạn đã gửi ":"You submitted "," điểm cho lượt này. Gửi lại sẽ thay điểm cũ.":" points this round. Resubmitting replaces the earlier rating.",
+  "Lỗi: ":"Error: ","Không tìm thấy MSSV này trong buổi ":"Student ID not found in session ","Không tìm thấy MSSV này trong buổi này.":"Student ID not found in this session.","Cần ít nhất ":"At least "," SV cho ":" students are needed for "," nhóm.":" groups.","Chưa có URL Web App (tab Cài đặt).":"No Web App URL. Open Settings.","Rubric chưa hợp lệ (tab Thiết lập): ":"Invalid rubric (Setup): ","Dòng ":"Line "," thiếu điểm tối đa (vd: Fluency | 1.5).":" is missing the maximum score (e.g. Fluency | 1.5)."," chưa hợp lệ.":" is invalid.","Chưa có tiêu chí nào.":"No criteria entered.","Tối đa ":"Maximum "," tiêu chí.":" criteria."," tiêu chí, tổng ":" criteria, total "," điểm":" points"," → quy về thang 10.":" → scaled to 10.",
+  "Đã mở lượt ":"Opened Round "," cho SV chấm.":" for student ratings.","Chưa đồng bộ phân công: vào tab Phân công → Đồng bộ.":"Assignments are not synced. Open Plan → Sync.","Chưa có phân công. Vào tab Thiết lập và bấm “Xáo nhóm ngẫu nhiên”.":"No assignments yet. Open Setup and click “Shuffle students into groups”.",
+  "Chưa có nhóm. Bấm “Xáo nhóm ngẫu nhiên” trước.":"No groups yet. Click “Shuffle students into groups” first.","Chưa có nhóm. Bấm ":"No groups yet. Click "," trước.":" first.","Lượt ":"Round ","đi lượt ":"go in round ","chốt":"home presenter"," SV":" students","mã buổi: ":"session code: ","Đã đồng bộ lúc ":"Synced at ","Chưa có nhóm nào.":"No groups yet."
+});
+let LANG = storeLanguage();
+const TEXT_SOURCE = new WeakMap();
+function storeLanguage() { try { return localStorage.getItem("jigsaw_language") || "vi"; } catch { return "vi"; } }
+function tr(value) { let s = String(value); if (LANG !== "en") return s; for (const [vi,en] of Object.entries(EN).sort((a,b) => b[0].length-a[0].length)) s = s.split(vi).join(en); return s; }
+function setText(node, value) { const s = String(value); node.dataset.sourceText = s; node.textContent = tr(s); }
+function applyTranslations(root = document.body) {
+  const walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let n;
+  while ((n = walk.nextNode())) {
+    if (!TEXT_SOURCE.has(n)) TEXT_SOURCE.set(n, n.nodeValue);
+    n.nodeValue = tr(TEXT_SOURCE.get(n));
+  }
+  root.querySelectorAll("[placeholder],[aria-label],title").forEach(node => {
+    for (const attr of ["placeholder","aria-label","title"]) if (node.hasAttribute(attr)) {
+      const key = `data-source-${attr}`;
+      if (!node.hasAttribute(key)) node.setAttribute(key, node.getAttribute(attr));
+      node.setAttribute(attr, tr(node.getAttribute(key)));
+    }
+  });
+  root.querySelectorAll("[data-source-text]").forEach(node => node.textContent = tr(node.dataset.sourceText));
+}
+function applyTheme(mode) {
+  if (!["auto","light","dark"].includes(mode)) mode = "auto";
+  try { localStorage.setItem("jigsaw_theme", mode); } catch {}
+  if (mode === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", mode);
+  ["themeSelect","stThemeSelect"].forEach(id => { const n = $("#"+id); if (n) n.value = mode; });
+}
+function applyLanguage(lang) {
+  LANG = lang === "en" ? "en" : "vi";
+  try { localStorage.setItem("jigsaw_language", LANG); } catch {}
+  document.documentElement.lang = LANG;
+  ["languageSelect","stLanguageSelect"].forEach(id => { const n = $("#"+id); if (n) n.value = LANG; });
+  applyTranslations();
+}
+function bindAppearance() {
+  applyTheme((() => { try { return localStorage.getItem("jigsaw_theme") || "auto"; } catch { return "auto"; } })());
+  applyLanguage(LANG);
+  ["themeSelect","stThemeSelect"].forEach(id => { const n = $("#"+id); if (n) n.onchange = () => applyTheme(n.value); });
+  ["languageSelect","stLanguageSelect"].forEach(id => { const n = $("#"+id); if (n) n.onchange = () => applyLanguage(n.value); });
+}
 const el = (tag, attrs = {}, ...kids) => {
   const n = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -352,7 +498,10 @@ const el = (tag, attrs = {}, ...kids) => {
     else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
     else if (v !== null && v !== undefined && v !== false) n.setAttribute(k, v);
   }
-  for (const c of kids.flat()) if (c !== null && c !== undefined && c !== false) n.append(c.nodeType ? c : String(c));
+  for (const c of kids.flat()) if (c !== null && c !== undefined && c !== false) {
+    if (c.nodeType) n.append(c);
+    else { const node = document.createTextNode(String(c)); TEXT_SOURCE.set(node, String(c)); node.nodeValue = tr(c); n.append(node); }
+  }
   return n;
 };
 const store = {
@@ -366,7 +515,7 @@ const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i-
 const fmt = s => { s = Math.max(0, Math.ceil(s)); return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); };
 const slug = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").replace(/[^a-zA-Z0-9]+/g, "-").replace(/^-|-$/g, "").toLowerCase() || "buoi";
 const today = () => new Date().toISOString().slice(0, 10);
-const setStatus = (node, msg, kind = "") => { node.textContent = msg; node.className = "status " + kind; };
+const setStatus = (node, msg, kind = "") => { node.dataset.sourceText = String(msg); node.textContent = tr(msg); node.className = "status " + kind; };
 
 function apiUrl() {
   const p = new URLSearchParams(location.search).get("api");
@@ -485,7 +634,7 @@ function bindSetupInputs() {
       S[key] = n.type === "number" ? Number(n.value) : n.value;
       if (key === "studentsText") countStudents();
       if (key === "presentMin" || key === "qaMin") resetTimer();
-      if (key === "sessionName") renderHeader();
+      if (["sessionName","studentsText","topicsText","groupCount","rounds"].includes(key)) { S.synced = false; renderHeader(); }
       if (key === "rounds" && S.groups.length) { recompute(); }
       save();
     });
@@ -506,6 +655,8 @@ function applyTopicList(list) {
 function newSession() {
   S.sessionId = slug(S.sessionName) + "-" + today();
   S.currentRound = 0;
+  S.synced = false;
+  renderHeader();
 }
 
 /** Đặt số lượt = số nhóm − 1 để nhóm nào cũng nghe đủ các chủ đề còn lại */
@@ -566,8 +717,8 @@ function applyTopicsInOrder() {
 }
 
 function renderHeader() {
-  const sync = S.sessionId ? ` · mã buổi: ${S.sessionId}` : "";
-  $("#sessionLine").textContent = (S.sessionName || "") + sync;
+  const sync = S.sessionId ? ` · mã buổi: ${S.sessionId} · ${S.synced ? "Đã đồng bộ" : "Chưa đồng bộ"}` : " · Chưa đồng bộ";
+  setText($("#sessionLine"), (S.sessionName || "") + sync);
 }
 
 function renderPlan() {
@@ -685,12 +836,12 @@ function tick() {
 function renderClock() {
   const ph = $("#runPhase");
   const labels = { present: "Trình bày", qa: "Hỏi đáp & chấm điểm", done: "Hết giờ – về bàn / chuyển lượt", idle: "Chưa bắt đầu" };
-  ph.textContent = S.currentRound === 0 ? "Chưa bắt đầu" : labels[T.phase];
+  setText(ph, S.currentRound === 0 ? "Chưa bắt đầu" : labels[T.phase]);
   ph.className = "phase " + (T.phase === "qa" ? "qa" : T.phase === "done" ? "done" : "");
   $("#runTime").textContent = fmt(T.remain);
   const total = T.phase === "qa" ? qaSec() : presentSec();
   $("#runBar").style.width = (T.phase === "done" ? 100 : total ? (100 * (1 - T.remain / total)) : 0) + "%";
-  $("#btnStart").textContent = T.running ? "Tạm dừng" : (S.currentRound === 0 ? "Bắt đầu lượt 1" : "Bắt đầu");
+  setText($("#btnStart"), T.running ? "Tạm dừng" : (S.currentRound === 0 ? "Bắt đầu lượt 1" : "Bắt đầu"));
 }
 async function goRound(k) {
   S.currentRound = Math.max(0, Math.min(k, S.roundsEff)); save();
@@ -706,17 +857,19 @@ async function goRound(k) {
 }
 function renderRun() {
   const k = S.currentRound, R = S.roundsEff;
-  $("#runRound").textContent = k === 0 ? `Chuẩn bị · ${R} lượt` : `Lượt ${k} / ${R}`;
+  setText($("#runRound"), k === 0 ? `Chuẩn bị · ${R} lượt` : `Lượt ${k} / ${R}`);
   const box = $("#movers"); box.replaceChildren();
   if (!S.groups.length) { box.append(el("p", { class: "muted" }, "Chưa có phân công.")); return; }
   const show = k === 0 ? 1 : k;
-  $("#moversLabel").textContent = k === 0 ? "Lượt 1 sẽ di chuyển" : `Lượt ${k}: người số ${k} của mỗi nhóm di chuyển`;
+  setText($("#moversLabel"), k === 0 ? "Lượt 1 sẽ di chuyển" : `Lượt ${k}: người số ${k} của mỗi nhóm di chuyển`);
   S.rotation[show].forEach((slot, dest) => {
     if (!slot) return;
     const m = memberById(S, slot.presenterId);
-    box.append(el("div", { class: "mv", style: `--gc:${gColor(slot.fromGroup)}` },
+    box.append(el("div", { class: "mv", style: `--gc:${gColor(dest)}` },
       el("div", { class: "path" }, `${gName(slot.fromGroup)} → ${gName(dest)}`),
-      el("div", { class: "who" }, m.name), el("div", { class: "muted small" }, S.groups[slot.fromGroup].topic)));
+      el("div", { class: "who" }, m.name),
+      el("span", { class:"chip", style:`--gc:${gColor(dest)}` }, `Bàn đích ${gName(dest)}`),
+      el("div", { class: "muted small" }, S.groups[slot.fromGroup].topic)));
   });
   renderClock();
 }
@@ -731,7 +884,7 @@ function renderQr() {
   const box = $("#qr"); box.replaceChildren();
   const url = studentUrl();
   $("#qrUrl").textContent = url;
-  if (window.QRCode) new QRCode(box, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+  if (window.QRCode) new QRCode(box, { text: url, width: 280, height: 280, correctLevel: QRCode.CorrectLevel.M });
   else box.append(el("p", { class: "small" }, "Không tải được thư viện QR. Gửi link bên dưới cho SV."));
 }
 
@@ -797,25 +950,41 @@ function exportCsv() {
 }
 
 /* ---------- Form rubric (dùng chung GV & SV) ---------- */
-function rubricForm(container, onChange) {
-  const picks = CONFIG.CRITERIA.map(() => null);
+function rubricForm(container, onChange, initial = null) {
+  const picks = CONFIG.CRITERIA.map((_, i) => initial && initial[i] !== undefined ? initial[i] : null);
   container.replaceChildren();
   const total = el("div", { class: "total" }, el("span", {}, "Tổng"), el("span", { class: "num" }, "– / 10"));
+  let progressText, progressBar;
+  if (container.id === "stRubricForm") {
+    progressText = el("span", { class:"num" }, `Đã chấm ${picks.filter(x => x !== null).length}/${picks.length} tiêu chí`);
+    progressBar = el("i");
+    container.append(el("div", { class:"st-progress", role:"status", "aria-live":"polite" },
+      el("div", { class:"st-progress-head" }, el("span", {}, "Tiến độ chấm"), progressText), el("div", { class:"bar", "aria-hidden":"true" }, progressBar)));
+  }
+  const updateProgress = () => {
+    const doneCount = picks.filter(x => x !== null).length;
+    const done = doneCount === picks.length;
+    total.lastChild.textContent = done ? to10(picks, CONFIG.CRITERIA) + " / 10" : "– / 10";
+    if (progressText) setText(progressText, LANG === "en" ? `${doneCount} of ${picks.length} criteria rated` : `Đã chấm ${doneCount}/${picks.length} tiêu chí`);
+    if (progressBar) progressBar.style.width = (100 * doneCount / picks.length) + "%";
+  };
   CONFIG.CRITERIA.forEach((c, ci) => {
     const btns = CONFIG.LEVELS.map(([lab, f], li) => {
-      const b = el("button", { type: "button", "aria-pressed": "false" }, el("b", {}, round2(c.max * f)), lab);
+      const value = round2(c.max * f);
+      const selected = picks[ci] !== null && picks[ci] === value;
+      const b = el("button", { type: "button", "aria-pressed": selected ? "true" : "false", class: selected ? "sel" : "" }, el("b", {}, value), lab);
       b.addEventListener("click", () => {
-        picks[ci] = round2(c.max * f);
+        picks[ci] = value;
         btns.forEach((x, xi) => { x.classList.toggle("sel", xi === li); x.setAttribute("aria-pressed", xi === li ? "true" : "false"); });
-        const done = picks.every(p => p !== null);
-        total.lastChild.textContent = done ? to10(picks, CONFIG.CRITERIA) + " / 10" : "– / 10";
-        onChange && onChange(picks);
+        updateProgress();
+        onChange && onChange(picks, picks.every(p => p !== null));
       });
       return b;
     });
     container.append(el("div", { class: "crit" }, el("div", { class: "head" }, el("b", {}, c.name), el("span", { class: "muted small" }, "tối đa " + c.max + " đ")), el("div", { class: "levels" }, btns)));
   });
   container.append(total);
+  updateProgress();
   return picks;
 }
 
@@ -864,14 +1033,16 @@ async function saveCfg() {
 const TABS = ["setup", "plan", "run", "results", "config"];
 function route() {
   const h = location.hash.replace("#", "");
-  if (h === "score") { $("#teacher").hidden = true; $("#student").hidden = false; initStudent(); return; }
+  if (h === "score") { $("#teacher").hidden = true; $("#student").hidden = false; initStudent(); applyTranslations(); return; }
   if (!teacherReady) initTeacher();
   $("#teacher").hidden = false; $("#student").hidden = true;
   const tab = TABS.includes(h) ? h : "setup";
   TABS.forEach(t => { $("#tab-" + t).hidden = t !== tab; });
   document.querySelectorAll("nav.tabs a").forEach(a => a.classList.toggle("on", a.dataset.tab === tab));
   if (tab === "run") { renderRun(); renderQr(); }
+  if (tab === "plan") renderPlan();
   if (tab === "results") renderResults();
+  applyTranslations();
 }
 
 let teacherReady = false;
@@ -891,9 +1062,9 @@ function initTeacher() {
     if (typeof gvPicks !== "undefined" && $("#gvForm")) gvPicks = rubricForm($("#gvForm"));
   };
   critBox.value = S.criteriaText;
-  critBox.addEventListener("input", () => { S.criteriaText = critBox.value; save(); applyCriteria(); });
-  $("#btnPresetMP").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.mp; save(); applyCriteria(); };
-  $("#btnPresetDelivery").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.delivery; save(); applyCriteria(); };
+  critBox.addEventListener("input", () => { S.criteriaText = critBox.value; S.synced = false; renderHeader(); save(); applyCriteria(); });
+  $("#btnPresetMP").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.mp; S.synced = false; renderHeader(); save(); applyCriteria(); };
+  $("#btnPresetDelivery").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.delivery; S.synced = false; renderHeader(); save(); applyCriteria(); };
   applyCriteria();
   $("#btnRandomGroups").onclick = randomGroups;
   $("#btnChosenGroups").onclick = useChosenGroups;
@@ -923,7 +1094,7 @@ function initTeacher() {
 }
 
 /* ======================= TRANG SINH VIÊN ======================= */
-let ST = { state: null, me: null, poll: null, round: -1, picks: [], dirty: false };
+let ST = { state: null, me: null, poll: null, round: -1, picks: [], dirty: false, pendingState: null, historyRows: [], historyLoaded: false, lastSent: null };
 function initStudent() {
   if (ST.inited) return; ST.inited = true;
   $("#stId").value = store.get("stId", "");
@@ -950,6 +1121,7 @@ async function studentLogin() {
     if (state.criteria && state.criteria.length) CONFIG.CRITERIA = state.criteria;
     $("#stLogin").hidden = true; $("#stMain").hidden = false;
     renderStudent();
+    loadStudentHistory();
     clearInterval(ST.poll); ST.poll = setInterval(pollState, 8000);
   } catch (e) { setStatus(s, e.message || "Không kết nối được.", "err"); }
 }
@@ -957,12 +1129,60 @@ async function pollState() {
   try {
     const state = await fetchState();
     const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound;
-    ST.state = state;
-    if (changed && !ST.dirty) renderStudent();
-    else if (changed) $("#stNewRound") && ($("#stNewRound").hidden = false);
+    if (!changed) { ST.state = state; return; }
+    if (!ST.dirty) { ST.state = state; renderStudent(); }
+    else { ST.pendingState = state; const notice = $("#stNewRound"); if (notice) notice.hidden = false; }
   } catch {}
 }
-function renderStudent() {
+async function loadStudentHistory() {
+  const status = $("#historyStatus");
+  if (!status) return;
+  setStatus(status, "Đang tải lịch sử từ Google Sheet…");
+  try {
+    // Query the existing scores endpoint without a session filter to include previous sessions when available.
+    const r = await apiGet({ action: "scores" });
+    if (!r.ok) throw new Error(errText(r.error));
+    ST.historyRows = Array.isArray(r.rows) ? r.rows : [];
+    ST.historyLoaded = true;
+    renderStudentHistory();
+  } catch {
+    ST.historyRows = []; ST.historyLoaded = true;
+    if (status.isConnected) setStatus(status, "Chưa thể tải lịch sử điểm.", "err");
+  }
+}
+function sessionLabel(row) {
+  if (row.sessionName) return row.sessionName;
+  const date = String(row.sessionId || "").match(/(\d{4}-\d{2}-\d{2})/);
+  return date ? `Buổi ${date[1]}` : String(row.sessionId || "Buổi học");
+}
+function renderStudentHistory() {
+  const area = $("#studentHistoryContent"), status = $("#historyStatus");
+  if (!area || !ST.me || !ST.historyLoaded) return;
+  area.replaceChildren();
+  const own = String(ST.me.id).toLowerCase();
+  const rows = ST.historyRows || [];
+  const votes = rows.filter(r => String(r.raterId || "").toLowerCase() === own && r.role !== "teacher");
+  const received = rows.filter(r => String(r.presenterId || "").toLowerCase() === own);
+  const sortRecent = (a,b) => String(b.sessionId || "").localeCompare(String(a.sessionId || "")) || Number(b.round || 0) - Number(a.round || 0);
+  votes.sort(sortRecent); received.sort(sortRecent);
+  if (status) setStatus(status, LANG === "en" ? `${votes.length} ratings sent · ${received.length} scores received` : `${votes.length} lượt đã chấm · ${received.length} điểm nhận được`, "ok");
+  const list = (title, items, makeItem) => {
+    const section = el("section", { class:"history-list" }, el("h3", {}, title));
+    if (!items.length) section.append(el("p", { class:"muted small" }, "Chưa có lịch sử điểm."));
+    else items.slice(0, 40).forEach(r => section.append(makeItem(r)));
+    return section;
+  };
+  area.append(el("div", { class:"st-history-grid" },
+    list("Lượt bạn đã bình chọn", votes, r => el("div", { class:"history-item" },
+      el("b", {}, r.presenterName || r.presentedName || r.presenterId || "Người trình bày"),
+      el("span", { class:"muted small" }, `${sessionLabel(r)} · Lượt ${r.round || "—"}`),
+      el("span", {}, `Điểm bạn đã chấm: ${r.total ?? "—"}/10`))),
+    list("Điểm nhận được", received, r => el("div", { class:"history-item" },
+      el("b", {}, r.role === "teacher" ? "Giảng viên" : (r.raterName || r.raterId || "Bạn học")),
+      el("span", { class:"muted small" }, `${sessionLabel(r)} · Lượt ${r.round || "—"}`),
+      el("span", { class:"history-points" }, `${r.total ?? "—"} / 10`)))));
+}
+function renderStudent({ carry = null } = {}) {
   const st = ST.state, me = memberById(st, ST.me.id);
   const box = $("#stMain"); box.replaceChildren(); ST.dirty = false;
   $("#stSession").textContent = st.sessionName;
@@ -973,6 +1193,10 @@ function renderStudent() {
     el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, me.name), el("span", { class: "chip", style: `--gc:${gColor(me.groupIndex)}` }, "Bàn " + gName(me.groupIndex))),
     el("p", { class: "muted small" }, `Nhóm bạn trình bày: ${g.topic}`),
     el("button", { type: "button", onclick: () => { clearInterval(ST.poll); ST.me = null; $("#stMain").hidden = true; $("#stLogin").hidden = false; setStatus($("#stLoginStatus"), ""); } }, "Đổi MSSV")));
+  box.append(el("details", { class:"panel", id:"studentHistory" },
+    el("summary", { class:"row history-toggle", style:"justify-content:space-between" }, el("h2", {}, "Lịch sử qua các tuần"), el("span", { class:"status", id:"historyStatus" }, "Đang tải lịch sử từ Google Sheet…")),
+    el("div", { id:"studentHistoryContent" })));
+  renderStudentHistory();
 
   const k = Number(st.currentRound);
   const refresh = el("button", { type: "button", onclick: async () => { try { ST.state = await fetchState(); renderStudent(); } catch {} } }, "Tải lại");
@@ -991,19 +1215,29 @@ function renderStudent() {
   if (!slot) { box.append(el("div", { class: "notice" }, `Lượt ${k}: không có khách đến bàn bạn.`), refresh); return; }
   const p = memberById(st, slot.presenterId);
   box.append(el("div", { class: "visitor", style: `--gc:${gColor(slot.fromGroup)}` },
-    el("span", { class: "label" }, `Lượt ${k} / ${st.rounds} · khách từ bàn ${gName(slot.fromGroup)}`),
+    el("span", { class: "label" }, "Đang trình bày tại bàn bạn"),
+    el("span", { class: "muted small" }, `Lượt ${k} / ${st.rounds} · khách từ bàn ${gName(slot.fromGroup)}`),
     el("p", { class: "name" }, p.name),
     el("p", { class: "muted" }, "Chủ đề: " + st.groups[slot.fromGroup].topic)));
 
-  const newRound = el("div", { class: "notice", id: "stNewRound", hidden: true }, "GV đã chuyển lượt. ", el("button", { type: "button", onclick: renderStudent }, "Sang lượt mới"));
+  const newRound = el("div", { class: "notice", id: "stNewRound", hidden: true, role:"alert", "aria-live":"assertive" },
+    el("p", { class:"big" }, "GV đã chuyển lượt. Bản nháp điểm của bạn vẫn được giữ."),
+    el("p", { class:"small" }, "Sang lượt mới, hãy kiểm tra lại các mức điểm trước khi gửi cho người trình bày mới."),
+    el("button", { type: "button", onclick: () => {
+      const draft = { picks:ST.picks.slice(), comment:$("#stComment")?.value || "" };
+      if (ST.pendingState) ST.state = ST.pendingState;
+      ST.pendingState = null;
+      renderStudent({ carry:draft });
+    } }, "Sang lượt mới, giữ lựa chọn"));
   box.append(newRound);
-  const formBox = el("div", { class: "stack" });
+  const formBox = el("div", { class: "stack", id:"stRubricForm" });
   box.append(formBox);
-  const key = `sent_${st.sessionId}_${k}`;
-  const prev = store.get(key, null);
-  ST.picks = rubricForm(formBox, () => { ST.dirty = true; });
+  const prevRow = ST.historyRows.find(r => String(r.raterId || "").toLowerCase() === String(me.id).toLowerCase() && String(r.sessionId || "") === String(st.sessionId || "") && Number(r.round) === k && r.role !== "teacher");
+  const prev = ST.lastSent && ST.lastSent.sessionId === st.sessionId && ST.lastSent.round === k && String(ST.lastSent.presenterId) === String(p.id) ? ST.lastSent.total : prevRow?.total;
+  ST.picks = rubricForm(formBox, () => { ST.dirty = true; }, carry?.picks || null);
   const cmt = el("textarea", { id: "stComment", maxlength: "300", placeholder: "Góp ý ngắn (không bắt buộc)", style: "min-height:70px" });
-  const status = el("p", { class: "status" }, prev ? `Bạn đã gửi ${prev} điểm cho lượt này. Gửi lại sẽ thay điểm cũ.` : "");
+  cmt.value = carry?.comment || "";
+  const status = el("p", { class: "status", role:"status", "aria-live":"polite" }, prev ? `Bạn đã gửi ${prev} điểm cho lượt này. Gửi lại sẽ thay điểm cũ.` : "");
   const send = el("button", { class: "primary", type: "button" }, "Gửi điểm");
   send.onclick = async () => {
     if (ST.picks.some(x => x === null)) return setStatus(status, "Chọn mức cho đủ các tiêu chí.", "err");
@@ -1011,16 +1245,18 @@ function renderStudent() {
     try {
       const r = await apiPost({ action: "submitScore", sessionId: st.sessionId, round: k, raterId: me.id, presenterId: p.id, scores: ST.picks, comment: cmt.value });
       if (!r.ok) throw new Error(errText(r.error));
-      store.set(key, r.total); ST.dirty = false;
+      ST.lastSent = { sessionId:st.sessionId, round:k, presenterId:p.id, total:r.total }; ST.dirty = false;
       setStatus(status, `Đã gửi ${r.total} điểm. Cảm ơn bạn!`, "ok");
+      loadStudentHistory();
     } catch (e) { setStatus(status, e.message || "Gửi không được, thử lại.", "err"); }
     send.disabled = false;
   };
-  box.append(el("div", { class: "field" }, el("label", { for: "stComment" }, "Góp ý"), cmt), send, status);
+  box.append(el("div", { class: "field" }, el("label", { for: "stComment" }, "Góp ý"), cmt), el("div", { class:"st-submitbar" }, send), status);
 }
 
 /* ======================= KHỞI ĐỘNG ======================= */
 window.addEventListener("hashchange", route);
+bindAppearance();
 route();
 </script>
 </body>
