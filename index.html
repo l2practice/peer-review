@@ -172,6 +172,21 @@ body.fs header.top, body.fs .runhide { display: none; }
       </div>
     </div>
     <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2>Rubric chấm của buổi này</h2>
+        <div class="row">
+          <button id="btnPresetMP" type="button">Mẫu MP (4 tiêu chí)</button>
+          <button id="btnPresetDelivery" type="button">Mẫu MP + kỹ năng trình bày (7 tiêu chí)</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="criteria">Mỗi dòng một tiêu chí: <b>Tên tiêu chí | điểm tối đa</b></label>
+        <textarea id="criteria" style="min-height:150px" placeholder="Time management | 1&#10;Voice clear | 1&#10;Loud enough | 1&#10;Fluency | 1.5"></textarea>
+      </div>
+      <p class="status" id="critStatus"></p>
+      <p class="muted small">Mỗi tiêu chí có 4 mức: Xuất sắc (100%), Tốt (75%), Đạt (50%), Cần cải thiện (25%). Tổng điểm luôn được quy về thang 10. Đổi rubric xong nhớ bấm <b>Đồng bộ</b> ở tab Phân công để trang chấm của SV cập nhật; mỗi buổi giữ rubric riêng của buổi đó.</p>
+    </div>
+    <div class="panel">
       <h2>Bấm để phân công</h2>
       <div class="row">
         <button class="primary" id="btnChosenGroups">Dùng nhóm SV đã chọn</button>
@@ -275,11 +290,7 @@ body.fs header.top, body.fs .runhide { display: none; }
       <div class="row"><button class="primary" id="btnSaveCfg">Lưu & kiểm tra kết nối</button><span class="status" id="cfgStatus"></span></div>
       <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ; chỉ phần chấm điểm qua QR cần Google Sheet. URL và PIN chỉ lưu trên máy này.</p>
     </div>
-    <div class="panel">
-      <h2>Rubric chấm micro-present</h2>
-      <p class="muted small">Sửa trong mảng <code>CONFIG.CRITERIA</code> ở đầu phần script (tối đa 4 tiêu chí, tổng 10 điểm).</p>
-      <ul id="critList" class="small"></ul>
-    </div>
+    <p class="muted small">Rubric chấm điểm nằm ở tab Thiết lập và có thể đổi theo từng buổi.</p>
   </section>
 </div>
 
@@ -305,8 +316,31 @@ const CONFIG = {
     { name: "Nhận định phản biện", max: 2 },
     { name: "Trình bày & thời gian", max: 2 }
   ],
-  LEVELS: [ ["Xuất sắc", 1], ["Tốt", 0.75], ["Đạt", 0.5], ["Cần cải thiện", 0.25] ]
+  LEVELS: [ ["Xuất sắc", 1], ["Tốt", 0.75], ["Đạt", 0.5], ["Cần cải thiện", 0.25] ],
+  PRESETS: {
+    mp: "Hiểu biết công cụ | 3\nDemo trên bài học thật | 3\nNhận định phản biện | 2\nTrình bày & thời gian | 2",
+    delivery: "Hiểu biết công cụ | 2\nDemo trên bài học thật | 2\nNhận định phản biện | 1.5\nQuản lý thời gian (time management) | 1\nGiọng nói rõ ràng (clear voice) | 1\nÂm lượng vừa đủ nghe (loud enough) | 1\nLưu loát (fluency) | 1.5"
+  }
 };
+const MAX_CRITERIA = 12;
+/** "Tên | điểm" mỗi dòng → [{name, max}] ; trả về {list, error} */
+function parseCriteria(text) {
+  const list = [];
+  for (const raw of String(text || "").split(/\r?\n/)) {
+    const line = raw.trim(); if (!line) continue;
+    const m = line.match(/^(.*?)[|:\t]\s*([\d.,]+)\s*(đ|điểm)?$/i);
+    if (!m) return { list, error: `Dòng “${line}” thiếu điểm tối đa (vd: Fluency | 1.5).` };
+    const max = Number(m[2].replace(",", "."));
+    if (!m[1].trim() || !(max > 0)) return { list, error: `Dòng “${line}” chưa hợp lệ.` };
+    list.push({ name: m[1].trim().slice(0, 80), max });
+  }
+  if (!list.length) return { list, error: "Chưa có tiêu chí nào." };
+  if (list.length > MAX_CRITERIA) return { list, error: `Tối đa ${MAX_CRITERIA} tiêu chí.` };
+  return { list, error: null };
+}
+const critTotal = list => list.reduce((a, c) => a + c.max, 0);
+/** Tổng điểm thô → thang 10 */
+const to10 = (picks, list) => Math.round(picks.reduce((a, x) => a + x, 0) / critTotal(list) * 100) / 10;  // 1 chữ số thập phân
 
 /* ======================= TIỆN ÍCH ======================= */
 const $ = (s, r = document) => r.querySelector(s);
@@ -592,6 +626,9 @@ async function syncState(quiet) {
   const st = $("#syncStatus");
   if (!S.groups.length) return setStatus(st, "Chưa có phân công.", "err");
   if (!apiUrl()) return setStatus(st, "Chưa có URL Web App (tab Cài đặt).", "err");
+  const crit = parseCriteria(S.criteriaText);
+  if (crit.error) return setStatus(st, "Rubric chưa hợp lệ (tab Thiết lập): " + crit.error, "err");
+  CONFIG.CRITERIA = crit.list;
   // Đổi tên buổi (tuần mới) → mã buổi mới, điểm tuần mới không lẫn với tuần cũ
   if (!S.sessionId || !S.sessionId.startsWith(slug(S.sessionName) + "-")) { newSession(); renderRun(); }
   const payload = {
@@ -771,7 +808,7 @@ function rubricForm(container, onChange) {
         picks[ci] = round2(c.max * f);
         btns.forEach((x, xi) => { x.classList.toggle("sel", xi === li); x.setAttribute("aria-pressed", xi === li ? "true" : "false"); });
         const done = picks.every(p => p !== null);
-        total.lastChild.textContent = done ? round2(picks.reduce((a, x) => a + x, 0)) + " / 10" : "– / 10";
+        total.lastChild.textContent = done ? to10(picks, CONFIG.CRITERIA) + " / 10" : "– / 10";
         onChange && onChange(picks);
       });
       return b;
@@ -842,7 +879,22 @@ function initTeacher() {
   teacherReady = true;
   bindSetupInputs();
   $("#apiUrl").value = store.get("api", CONFIG.API_URL); $("#pin").value = store.get("pin", "");
-  $("#critList").replaceChildren(...CONFIG.CRITERIA.map(c => el("li", {}, `${c.name} – ${c.max} điểm`)));
+  // Rubric theo buổi
+  if (!S.criteriaText) S.criteriaText = CONFIG.PRESETS.mp;
+  const critBox = $("#criteria");
+  const applyCriteria = () => {
+    const { list, error } = parseCriteria(S.criteriaText);
+    if (error) return setStatus($("#critStatus"), error, "err");
+    CONFIG.CRITERIA = list;
+    const sum = round2(critTotal(list));
+    setStatus($("#critStatus"), `${list.length} tiêu chí, tổng ${sum} điểm` + (sum === 10 ? "." : ` → quy về thang 10.`), "ok");
+    if (typeof gvPicks !== "undefined" && $("#gvForm")) gvPicks = rubricForm($("#gvForm"));
+  };
+  critBox.value = S.criteriaText;
+  critBox.addEventListener("input", () => { S.criteriaText = critBox.value; save(); applyCriteria(); });
+  $("#btnPresetMP").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.mp; save(); applyCriteria(); };
+  $("#btnPresetDelivery").onclick = () => { S.criteriaText = critBox.value = CONFIG.PRESETS.delivery; save(); applyCriteria(); };
+  applyCriteria();
   $("#btnRandomGroups").onclick = randomGroups;
   $("#btnChosenGroups").onclick = useChosenGroups;
   $("#btnShuffleNumbers").onclick = shuffleNumbers;
