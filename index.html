@@ -6,31 +6,38 @@
 <title>Jigsaw Micro-present</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Lexend:wght@400;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* Layout: thanh điều hướng theo bước (Thiết lập → Phân công → Trình chiếu → Kết quả); trang SV (#score) là một cột cho điện thoại. */
 :root {
-  --bg: #e5efeb; --surface: #ffffff; --surface-2: #f4f8f6; --ink: #17231f; --muted: #4c5e57;
-  --line: #c7d5cf; --accent: #28736a; --accent-ink: #ffffff; --warn: #865900; --danger: #a52a20; --ok: #17643d;
-  --g1: #26766e; --g2: #af4938; --g3: #64519d; --g4: #39733d; --g5: #916300; --g6: #315e95; --g7: #964567; --g8: #4c5d57;
+  --bg: #eee9df; --surface: #f8f5ef; --surface-2: #e7e1d5; --ink: #1b2632; --muted: #5b6470;
+  --line: #c9c1b1; --accent: #2c3b4d; --accent-ink: #f8f5ef; --accent-soft: #f7dcc0; --flame: #ffb162; --truffle: #a35139;
+  --warn: #a35139; --danger: #9e2a1e; --ok: #3d6b45;
+  --g1: #2c3b4d; --g2: #a35139; --g3: #b26e22; --g4: #4e6e58; --g5: #6f5a92; --g6: #3f6c8f; --g7: #8c4a63; --g8: #6b6255;
+  --auth-a: #f4efe6; --auth-b: #eee9df; --auth-glow: rgb(255 177 98 / .55); --auth-navy: #2c3b4d; --auth-truffle: #a35139; --auth-card: #f8f4ec;
   --font: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --radius: 10px;
+  --display: "Lexend", "Be Vietnam Pro", system-ui, sans-serif;
+  --radius: 12px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --ink: #eef5f1; --muted: #b5c4bd;
-    --line: #3a4a43; --accent: #83cfc0; --accent-ink: #10231e; --warn: #f0c46c; --danger: #ff9386; --ok: #76d69f;
-    --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
+    --bg: #1b2632; --surface: #233142; --surface-2: #2c3b4d; --ink: #eee9df; --muted: #b3ac9e;
+    --line: #3d4d62; --accent: #ffb162; --accent-ink: #1b2632; --accent-soft: #4a3a2e; --flame: #ffb162; --truffle: #e08a6e;
+    --warn: #ffb162; --danger: #f08a73; --ok: #8cc29a;
+    --g1: #9fb4cc; --g2: #e08a6e; --g3: #ffb162; --g4: #8db59a; --g5: #b9a1da; --g6: #8fb8d9; --g7: #d99ab3; --g8: #c9c1b1;
+    --auth-a: #1b2632; --auth-b: #223040; --auth-glow: rgb(255 177 98 / .35); --auth-navy: #2c3b4d; --auth-truffle: #a35139; --auth-card: #233142;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --ink: #eef5f1; --muted: #b5c4bd;
-  --line: #3a4a43; --accent: #83cfc0; --accent-ink: #10231e; --warn: #f0c46c; --danger: #ff9386; --ok: #76d69f;
-  --g1: #4fb6be; --g2: #ef8a6e; --g3: #a991ec; --g4: #77c27a; --g5: #e2b54a; --g6: #73a7ef; --g7: #e07aae; --g8: #a3b1bd;
-  color-scheme: dark;
+    --bg: #1b2632; --surface: #233142; --surface-2: #2c3b4d; --ink: #eee9df; --muted: #b3ac9e;
+    --line: #3d4d62; --accent: #ffb162; --accent-ink: #1b2632; --accent-soft: #4a3a2e; --flame: #ffb162; --truffle: #e08a6e;
+    --warn: #ffb162; --danger: #f08a73; --ok: #8cc29a;
+    --g1: #9fb4cc; --g2: #e08a6e; --g3: #ffb162; --g4: #8db59a; --g5: #b9a1da; --g6: #8fb8d9; --g7: #d99ab3; --g8: #c9c1b1;
+    --auth-a: #1b2632; --auth-b: #223040; --auth-glow: rgb(255 177 98 / .35); --auth-navy: #2c3b4d; --auth-truffle: #a35139; --auth-card: #233142;
+    color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -38,7 +45,7 @@ html, body { margin: 0; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font); }
 .wrap { max-width: 1440px; margin: 0 auto; padding-block: 20px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-h1, h2, h3 { line-height: 1.2; text-wrap: balance; margin: 0; }
+h1, h2, h3 { line-height: 1.2; text-wrap: balance; margin: 0; font-family: var(--display); }
 h1 { font-size: 1.35rem; font-weight: 800; }
 h2 { font-size: 1.1rem; font-weight: 700; }
 h3 { font-size: .95rem; font-weight: 700; }
@@ -54,7 +61,7 @@ nav.tabs a { text-decoration: none; color: var(--muted); padding: 6px 14px; bord
 nav.tabs a.on { background: var(--accent); color: var(--accent-ink); }
 nav.tabs a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 12px; min-width: 0; box-shadow: 0 8px 24px rgba(31,57,47,.055); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 12px; min-width: 0; box-shadow: 0 8px 24px rgba(27,38,50,.055); }
 .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .stack { display: grid; gap: 16px; }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
@@ -127,7 +134,7 @@ body.fs header.top, body.fs .runhide { display: none; }
 .total { display: flex; justify-content: space-between; align-items: baseline; font-weight: 800; font-size: 1.2rem; }
 .notice { border: 1px dashed var(--line); border-radius: var(--radius); padding: 14px; background: var(--surface); }
 .big { font-size: 1.05rem; font-weight: 700; }
-.st-progress { position:sticky; top:8px; z-index:4; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 12px; box-shadow:0 5px 18px rgba(20,40,31,.09); }
+.st-progress { position:sticky; top:8px; z-index:4; background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:10px 12px; box-shadow:0 5px 18px rgba(27,38,50,.1); }
 .st-progress-head { display:flex; justify-content:space-between; gap:12px; align-items:center; font-weight:700; }
 .st-progress .bar { height:7px; margin-top:7px; }
 .st-submitbar { position:sticky; bottom:0; z-index:5; margin:0 -4px; padding:10px 4px max(10px,env(safe-area-inset-bottom,0px)); background:color-mix(in srgb,var(--bg) 88%,transparent); backdrop-filter:blur(12px); }
@@ -143,9 +150,9 @@ body.fs .wrap { max-width:none; padding:12px 20px; }
 body.fs .stage { grid-template-columns:minmax(0,1fr) minmax(300px,24vw); gap:20px; }
 body.fs .qrbox { position:sticky; top:12px; }
 body.fs .qr canvas, body.fs .qr img { width:min(32vh,340px) !important; height:min(32vh,340px) !important; }
-body.fs .clock { background:#252827; color:#f7f7f4; border-color:#414542; }
-body.fs .mv { background:#222826; color:#f6f8f6; border-color:#444e49; }
-body.fs .mv .muted { color:#d2ddd6; }
+body.fs .clock { background:#1b2632; color:#eee9df; border-color:#2c3b4d; }
+body.fs .mv { background:#233142; color:#eee9df; border-color:#3d4d62; }
+body.fs .mv .muted { color:#c9c1b1; }
 body.fs #runStatus { display:none; }
 body.fs .qrbox { padding:20px; }
 @media (min-width:1200px) { body:not(.fs) #tab-run .stage { grid-template-columns:minmax(0,1fr) 350px; } }
@@ -165,22 +172,22 @@ body.fs .qrbox { padding:20px; }
 
 /* Product dashboard pass inspired by the user's learning-dashboard reference. */
 :root {
-  --bg: #e4eeea; --surface: #fff; --surface-2: #f6f9f7; --line: #d5e0da;
-  --ink: #1c2823; --muted: #54645c; --accent: #347a70; --accent-ink: #fff;
-  --mint: #d5f2e6; --coral: #ffe0d8; --butter: #ffedbd; --lavender: #e8e1f8;
-  --shadow-soft: 0 16px 40px rgba(35, 58, 47, .075);
+  --bg: #eee9df; --surface: #f8f5ef; --surface-2: #e7e1d5; --line: #c9c1b1;
+  --ink: #1b2632; --muted: #5b6470; --accent: #2c3b4d; --accent-ink: #f8f5ef;
+  --mint: #e4ddd0; --coral: #f7dcc0; --butter: #f3e6d2; --lavender: #dde2e8;
+  --shadow-soft: 0 16px 40px rgba(27, 38, 50, .08);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --line: #3a4a43;
-    --ink: #eef5f1; --muted: #b5c4bd; --accent: #83cfc0; --accent-ink: #10231e;
-    --mint: #213a31; --coral: #412c29; --butter: #403825; --lavender: #302b3c;
+    --bg: #1b2632; --surface: #233142; --surface-2: #2c3b4d; --line: #3d4d62;
+    --ink: #eee9df; --muted: #b3ac9e; --accent: #ffb162; --accent-ink: #1b2632;
+    --mint: #26364a; --coral: #4a3a2e; --butter: #3f392e; --lavender: #2c3b4d;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #111715; --surface: #1b2420; --surface-2: #222e29; --line: #3a4a43;
-  --ink: #eef5f1; --muted: #b5c4bd; --accent: #83cfc0; --accent-ink: #10231e;
-  --mint: #213a31; --coral: #412c29; --butter: #403825; --lavender: #302b3c;
+  --bg: #1b2632; --surface: #233142; --surface-2: #2c3b4d; --line: #3d4d62;
+  --ink: #eee9df; --muted: #b3ac9e; --accent: #ffb162; --accent-ink: #1b2632;
+  --mint: #26364a; --coral: #4a3a2e; --butter: #3f392e; --lavender: #2c3b4d;
 }
 body { background: var(--bg); }
 .wrap { max-width: 1680px; padding: 22px 26px 48px; }
@@ -205,7 +212,7 @@ body { background: var(--bg); }
 .panel { padding: 22px; gap: 16px; border-color: transparent; }
 .panel h2 { font-size: 1.14rem; letter-spacing: -.02em; }
 button, input, textarea, select { border-radius: 12px; }
-button { box-shadow: 0 2px 0 rgba(18, 35, 27, .035); }
+button { box-shadow: 0 2px 0 rgba(27, 38, 50, .04); }
 button.primary { box-shadow: 0 8px 18px color-mix(in srgb, var(--accent) 23%, transparent); }
 input, textarea, select { border-color: var(--line); }
 .grid2 { gap: 18px; }
@@ -216,10 +223,10 @@ input, textarea, select { border-color: var(--line); }
 .gcard:nth-child(4n+3) { background: var(--lavender); }
 .gcard:nth-child(4n) { background: var(--butter); }
 .mv { border: 1px solid var(--line); background: var(--surface); }
-.clock { background: #252a27; color: #f5f8f5; border: 0; box-shadow: 0 24px 60px rgba(15, 24, 19, .24); }
-.clock .phase { padding: 8px 16px; border-radius: 999px; background: #244b40; color: #b5f0d7; }
-.clock .phase.qa { background: #503d1d; color: #ffe08a; }
-.clock .phase.done { background: #502b27; color: #ffc1b5; }
+.clock { background: #1b2632; color: #eee9df; border: 0; box-shadow: 0 24px 60px rgba(27, 38, 50, .28); }
+.clock .phase { padding: 8px 16px; border-radius: 999px; background: #2c3b4d; color: #ffb162; }
+.clock .phase.qa { background: #5a3d26; color: #ffd2a0; }
+.clock .phase.done { background: #a35139; color: #fff3ea; }
 .clock .time { letter-spacing: -.075em; }
 .qrbox { border: 0; background: var(--mint); padding: 24px; }
 #tab-setup .grid2 > .panel:first-child { background: var(--mint); }
@@ -228,8 +235,8 @@ input, textarea, select { border-color: var(--line); }
 #tab-setup > .panel:nth-child(3) { background: var(--butter); }
 #tab-plan > .panel:nth-child(2) { background: var(--coral); }
 #tab-plan > .panel:nth-child(3) { background: var(--mint); }
-#tab-results > .panel:first-child { background: #252a27; color: #f5f8f5; border: 0; }
-#tab-results > .panel:first-child .muted { color: #c1ccc5; }
+#tab-results > .panel:first-child { background: #1b2632; color: #eee9df; border: 0; }
+#tab-results > .panel:first-child .muted { color: #c9c1b1; }
 #tab-results > .panel:nth-child(2) { background: var(--coral); }
 #tab-results > .panel:nth-child(3) { background: var(--butter); }
 .student { padding-top: 8px; }
@@ -285,10 +292,154 @@ body.fs .wrap { padding: 12px 20px; }
   body.fs #tab-run .stage > .qrbox { grid-area: qr; }
   body.fs #movers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
 }
+/* ---------- Đăng nhập: nền màu tràn toàn trang, khung đăng nhập nổi phía trên (theo mẫu của GV) ---------- */
+.auth { position: relative; min-height: 100vh; overflow: hidden; isolation: isolate;
+  background: radial-gradient(ellipse 55% 60% at 52% 92%, var(--auth-glow), transparent 70%), linear-gradient(180deg, var(--auth-a), var(--auth-b)); }
+.auth-deco { position: absolute; z-index: -1; pointer-events: none; }
+.deco-navy { top: 0; right: 0; width: 22%; height: 60%; background: var(--auth-navy); }
+.deco-truffle { right: 0; bottom: 0; width: 22%; height: 40%; background: linear-gradient(160deg, var(--auth-truffle), #b9653f); }
+.deco-flame { right: 22%; bottom: 0; width: 14%; height: 24%; background: linear-gradient(180deg, #ffb162, #f39a4b); }
+.deco-arc { top: -18%; right: 16%; width: 30vw; height: 30vw; max-width: 460px; max-height: 460px; border-radius: 50%; background: radial-gradient(circle at 30% 70%, #c9c1b1, transparent 70%); opacity: .7; }
+.auth-art { position: absolute; z-index: 0; left: 26%; bottom: -2%; width: min(46vw, 700px); pointer-events: none; }
+.auth-inner { position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 32px; align-items: center;
+  padding-block: 32px; padding-left: max(24px, env(safe-area-inset-left, 0px), 6vw); padding-right: max(24px, env(safe-area-inset-right, 0px), 8vw); }
+.auth-copy { align-self: start; display: grid; gap: 18px; padding-top: 8px; max-width: 34rem; }
+.brand { display: flex; align-items: center; gap: 12px; color: #1b2632; margin-bottom: 4vh; }
+.brand svg { flex: none; }
+.brand b { display: block; font-family: var(--display); font-size: 1.25rem; font-weight: 700; line-height: 1.1; }
+.brand span { display: block; font-size: .7rem; letter-spacing: .32em; text-transform: uppercase; color: #4b5563; }
+.auth-hero { font-family: var(--display); color: #1b2632; font-size: clamp(2.6rem, 6vw, 5.2rem); font-weight: 700; line-height: .98; letter-spacing: -.03em; }
+.auth-hero small { display: block; margin-top: 10px; font-size: .48em; font-weight: 400; letter-spacing: -.01em; color: #2c3b4d; }
+.auth-rule { width: 64px; height: 4px; border-radius: 4px; background: #f39a4b; }
+.auth-tag { font-size: 1.15rem; line-height: 1.5; color: #2c3b4d; max-width: 22rem; }
+.auth-card { width: 100%; display: grid; gap: 14px; background: var(--auth-card); color: var(--ink); border-radius: 28px; padding: 32px;
+  box-shadow: 0 30px 80px rgb(27 38 50 / .22), 0 2px 0 rgb(255 255 255 / .5) inset; }
+.auth-icon { justify-self: center; width: 76px; height: 76px; border-radius: 20px; display: grid; place-items: center; background: var(--surface); box-shadow: 0 8px 24px rgb(27 38 50 / .12); }
+.auth-title { font-family: var(--display); font-size: 2rem; font-weight: 700; text-align: center; }
+.auth-sub { text-align: center; color: var(--muted); margin-top: -6px; }
+.ifield { position: relative; }
+.ifield > svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.ifield input, .ifield select { padding: 14px 52px 14px 48px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--line); font-size: 1rem; }
+.ifield input:focus, .ifield select:focus { border-color: var(--flame); outline: 3px solid rgb(255 177 98 / .35); outline-offset: 0; }
+.pw-eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); padding: 6px 8px; border: 0; background: transparent; color: var(--muted); display: grid; place-items: center; }
+.check { display: inline-flex; gap: 8px; align-items: center; font-weight: 500; font-size: .92rem; }
+.check input { width: 18px; height: 18px; accent-color: #f39a4b; }
+.link { color: var(--truffle); font-weight: 600; font-size: .9rem; text-decoration: none; background: none; border: 0; padding: 0; cursor: pointer; }
+.link:hover { text-decoration: underline; }
+button.block { width: 100%; padding: 15px; border-radius: 999px; font-size: 1.05rem; display: flex; justify-content: center; align-items: center; gap: 10px; }
+.auth-card button.primary { background: #2c3b4d; color: #f8f5ef; border-color: #2c3b4d; box-shadow: 0 10px 24px rgb(27 38 50 / .25); }
+button.ghost { background: transparent; white-space: nowrap; flex: none; }
+.auth-foot { display: grid; gap: 6px; justify-items: center; text-align: center; font-size: .9rem; color: var(--muted); }
+.auth-sep { height: 1px; background: var(--line); margin: 2px 0; }
+.modal-bg { position: fixed; inset: 0; background: rgb(27 38 50 / .5); display: grid; place-items: center; padding: 16px; z-index: 20; }
+.modal-bg .auth-card { max-width: 420px; }
+@media (max-width: 960px) {
+  .auth-inner { grid-template-columns: 1fr; justify-items: center; gap: 20px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+  .auth-copy { justify-self: stretch; gap: 10px; }
+  .brand { margin-bottom: 8px; }
+  .auth-hero { font-size: 2.3rem; } .auth-tag, .auth-rule { display: none; }
+  .auth-card { max-width: 440px; padding: 24px 20px; }
+  .deco-navy, .deco-arc { display: none; } .deco-truffle { width: 30%; height: 18%; } .deco-flame { right: 30%; width: 18%; height: 10%; }
+  .auth-art { display: none; }
+}
+:root[data-theme="dark"] .brand, :root[data-theme="dark"] .auth-hero, :root[data-theme="dark"] .auth-hero small, :root[data-theme="dark"] .auth-tag { color: #eee9df; }
+:root[data-theme="dark"] .brand span { color: #c9c1b1; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .auth-card button.primary { background: #ffb162; color: #1b2632; border-color: #ffb162; } :root:not([data-theme="light"]) .deco-arc { opacity: .18; } }
+:root[data-theme="dark"] .auth-card button.primary { background: #ffb162; color: #1b2632; border-color: #ffb162; }
+:root[data-theme="dark"] .deco-arc { opacity: .18; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .brand, :root:not([data-theme="light"]) .auth-hero, :root:not([data-theme="light"]) .auth-hero small, :root:not([data-theme="light"]) .auth-tag { color: #eee9df; } :root:not([data-theme="light"]) .brand span { color: #c9c1b1; } }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px; gap: 4px; }
+.seg button { border: 0; background: transparent; border-radius: 999px; color: var(--muted); }
+.seg button.on { background: var(--accent); color: var(--accent-ink); }
+.overlay { position: fixed; inset: 0; z-index: 30; background: rgb(27 38 50 / .45); display: grid; place-content: center; justify-items: center; gap: 12px; color: #fff; font-weight: 600; }
+.spin { width: 40px; height: 40px; border: 4px solid rgb(255 255 255 / .35); border-top-color: #ffb162; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.toasts { position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: grid; gap: 8px; z-index: 40; width: min(92vw, 420px); }
+.toast { background: #1b2632; color: #eee9df; padding: 10px 14px; border-radius: 12px; font-size: .9rem; box-shadow: 0 8px 24px rgb(0 0 0 / .2); }
+.toast.err { background: #9e2a1e; color: #fff; } .toast.ok { background: #3d6b45; color: #fff; }
+/* Trang SV: thẻ "tôi là ai" + lịch sử */
+.me { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.me-id { display: flex; gap: 12px; align-items: center; min-width: 0; flex: 1 1 220px; }
+.me .row button { padding: 6px 12px; font-size: .85rem; }
+.avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--gc, var(--accent)); color: #fff; display: grid; place-items: center; font-weight: 800; flex: none; }
+.hist { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; display: grid; gap: 6px; }
+.hist-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.score { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.crit-line { display: flex; justify-content: space-between; gap: 8px; font-size: .85rem; }
+.quote { font-size: .85rem; border-left: 3px solid var(--line); padding-left: 8px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+.clock button.primary { background: #ffb162; color: #1b2632; border-color: #ffb162; }
+.link, .pw-eye, .auth-card button.link { box-shadow: none; }
 </style>
 </head>
 <body>
-<div class="wrap">
+<!-- ===================== ĐĂNG NHẬP: nền tràn trang, khung nổi phía trên ===================== -->
+<div id="login" class="auth" hidden>
+  <div class="auth-deco deco-navy"></div><div class="auth-deco deco-arc"></div>
+  <div class="auth-deco deco-flame"></div><div class="auth-deco deco-truffle"></div>
+  <img class="auth-art" src="assets/podium.webp" alt="" width="1200" height="795" decoding="async">
+  <div class="auth-inner">
+    <section class="auth-copy" aria-label="Giới thiệu">
+      <div class="brand"><svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#f39a4b"/><rect x="11" y="13" width="26" height="16" rx="3" fill="#f8f5ef"/><rect x="15" y="22" width="4" height="4" rx="1" fill="#f39a4b"/><rect x="21" y="19" width="4" height="7" rx="1" fill="#f39a4b"/><rect x="27" y="16" width="4" height="10" rx="1" fill="#a35139"/><path d="M20 35h8l-1 6h-6z" fill="#2c3b4d"/><rect x="17" y="32" width="14" height="4" rx="2" fill="#2c3b4d"/></svg><div><b>MicroPresentation</b><span>Peer Assessment</span></div></div>
+      <h1 class="auth-hero">Peer<br>Assessment<small>Micro-Presentation</small></h1>
+      <div class="auth-rule" aria-hidden="true"></div>
+      <p class="auth-tag">Give constructive feedback, learn from your peers, and grow together.</p>
+    </section>
+
+    <form class="auth-card" id="stuForm" novalidate>
+      <div class="auth-icon"><svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><circle cx="12" cy="18" r="5" fill="#ffb162"/><circle cx="36" cy="18" r="5" fill="#ffb162"/><path d="M3 36c0-6 4-10 9-10s9 4 9 10z" fill="#f39a4b"/><path d="M27 36c0-6 4-10 9-10s9 4 9 10z" fill="#f39a4b"/><circle cx="24" cy="14" r="6.5" fill="#7a4a35"/><path d="M12 38c0-7.5 5.4-12.5 12-12.5S36 30.5 36 38z" fill="#8a5038"/></svg></div>
+      <h2 class="auth-title" id="authTitle">Đăng nhập</h2>
+      <p class="auth-sub" id="authSub">Vào hệ thống chấm điểm micro-presentation</p>
+
+      <div class="ifield" id="fCode" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg><input id="suCode" autocomplete="off" placeholder="Mã lớp (GV cung cấp)" aria-label="Mã lớp" style="text-transform:uppercase"></div>
+      <div class="ifield" id="fName" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-3.5 4.4-5 8-5s6.5 1.5 8 5"/></svg><input id="suName" autocomplete="name" placeholder="Họ và tên" aria-label="Họ và tên"></div>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6.5 16c.6-1.4 1.5-2 2.5-2s1.9.6 2.5 2M14 10h4M14 13.5h3"/></svg><input id="liId" autocomplete="username" placeholder="Mã số sinh viên" aria-label="Mã số sinh viên"></div>
+      <div class="ifield" id="fGroup" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 19c1-3 3.2-4.5 6-4.5s5 1.5 6 4.5M15 14.6c2.6-.3 4.6 1 5.6 3.6"/></svg><select id="suGroup" aria-label="Chọn nhóm"><option value="">Nhập mã lớp để chọn nhóm</option></select></div>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="liPw" type="password" autocomplete="current-password" placeholder="Mật khẩu" aria-label="Mật khẩu"><button type="button" class="pw-eye" data-for="liPw" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div id="fPw2" hidden><div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="liPw2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" aria-label="Nhập lại mật khẩu"><button type="button" class="pw-eye" data-for="liPw2" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+
+      <div class="row" style="justify-content:space-between" id="rowRemember">
+        <label class="check"><input type="checkbox" id="liRemember"> Ghi nhớ đăng nhập</label>
+        <button type="button" class="link" id="liForgot">Quên mật khẩu?</button>
+      </div>
+      <button class="primary block" id="liSubmit" type="submit"><span id="liSubmitText">Đăng nhập</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <div class="auth-sep"></div>
+      <div class="auth-foot">
+        <span id="switchWrap">Chưa có tài khoản? <button type="button" class="link" id="toSignup">Đăng ký bằng mã lớp</button></span>
+        <button type="button" class="link" id="teacherPortal">Cổng giảng viên →</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-bg" id="tModal" hidden>
+    <form class="auth-card" id="tForm" novalidate>
+      <div class="auth-icon"><svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#f39a4b"/><rect x="11" y="13" width="26" height="16" rx="3" fill="#f8f5ef"/><rect x="15" y="22" width="4" height="4" rx="1" fill="#f39a4b"/><rect x="21" y="19" width="4" height="7" rx="1" fill="#f39a4b"/><rect x="27" y="16" width="4" height="10" rx="1" fill="#a35139"/><path d="M20 35h8l-1 6h-6z" fill="#2c3b4d"/><rect x="17" y="32" width="14" height="4" rx="2" fill="#2c3b4d"/></svg></div>
+      <h2 class="auth-title">Cổng giảng viên</h2>
+      <p class="auth-sub">Đăng nhập bằng email giảng viên</p>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><input id="tEmail" type="email" autocomplete="username" placeholder="Email giảng viên" aria-label="Email giảng viên"></div>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="tPw" type="password" autocomplete="current-password" placeholder="Mật khẩu" aria-label="Mật khẩu"><button type="button" class="pw-eye" data-for="tPw" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <p class="muted small">Quên mật khẩu? Xem TEACHER_PASSWORD trong Script properties của Apps Script.</p>
+      <button class="primary block" type="submit" id="tSubmit">Đăng nhập <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button type="button" class="link" id="tClose" style="justify-self:center">Quay lại</button>
+    </form>
+  </div>
+
+</div>
+<div class="modal-bg" id="pwModal" hidden>
+    <form class="auth-card" id="pwForm" novalidate>
+      <h2 class="auth-title">Đổi mật khẩu</h2>
+      <p class="auth-sub" id="pwSub">Mật khẩu mới tối thiểu 6 ký tự.</p>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="cpOld" type="password" autocomplete="current-password" placeholder="Mật khẩu hiện tại" aria-label="Mật khẩu hiện tại"><button type="button" class="pw-eye" data-for="cpOld" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="cpNew" type="password" autocomplete="new-password" placeholder="Mật khẩu mới" aria-label="Mật khẩu mới"><button type="button" class="pw-eye" data-for="cpNew" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <div class="ifield"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15.5" r="1"/></svg><input id="cpNew2" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu mới" aria-label="Nhập lại mật khẩu mới"><button type="button" class="pw-eye" data-for="cpNew2" aria-label="Hiện hoặc ẩn mật khẩu"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+      <button class="primary block" type="submit">Lưu mật khẩu mới <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <button type="button" class="link" id="pwClose" style="justify-self:center">Để sau</button>
+    </form>
+  </div>
+<div class="overlay" id="overlay" hidden><span class="spin"></span><p id="overlayMsg">Đang đăng nhập…</p></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<div class="wrap" id="appWrap">
 
 <!-- ===================== TRANG GIẢNG VIÊN ===================== -->
 <div id="teacher">
@@ -306,6 +457,7 @@ body.fs .wrap { padding: 12px 20px; }
       <select id="themeSelect" aria-label="Giao diện sáng tối">
         <option value="auto">Theo thiết bị</option><option value="light">Sáng</option><option value="dark">Tối</option>
       </select>
+      <button type="button" class="ghost" data-logout>Đăng xuất</button>
     </div>
     <nav class="tabs" aria-label="Các bước">
       <a href="#setup" data-tab="setup">1. Thiết lập</a>
@@ -362,7 +514,8 @@ body.fs .wrap { padding: 12px 20px; }
     <div class="panel">
       <h2>Bấm để phân công</h2>
       <div class="row">
-        <button class="primary" id="btnChosenGroups">Dùng nhóm SV đã chọn</button>
+        <button class="primary" id="btnPullRoster">Lấy danh sách SV đã đăng ký</button>
+        <button id="btnChosenGroups">Dùng nhóm trong danh sách</button>
         <button id="btnShuffleNumbers">Giữ nhóm, xáo số thứ tự</button>
         <button id="btnShuffleTopics">Giữ nhóm, bốc thăm chủ đề</button>
         <button id="btnApplyTopics">Gán chủ đề theo thứ tự</button>
@@ -452,16 +605,38 @@ body.fs .wrap { padding: 12px 20px; }
       <div id="gvForm" class="stack"></div>
       <div class="row"><button class="primary" id="btnGvSubmit">Lưu điểm GV</button><span class="status" id="gvStatus"></span></div>
     </div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2>Tài khoản sinh viên</h2>
+        <div class="row"><button id="btnLoadAcc">Tải danh sách</button><span class="status" id="accStatus"></span></div>
+      </div>
+      <p class="muted small">SV tự đăng ký bằng mã lớp. SV quên mật khẩu: bấm “Đặt lại” → mật khẩu tạm là chính MSSV; SV đăng nhập sẽ được yêu cầu đổi mật khẩu.</p>
+      <div class="tablebox"><table id="accTable"></table></div>
+    </div>
   </section>
 
   <!-- Cài đặt -->
   <section id="tab-config" class="stack" hidden>
     <div class="panel">
+      <h2>Lớp học & đăng ký</h2>
+      <p class="muted small">SV đăng ký bằng mã lớp, tự chọn nhóm và tự đặt mật khẩu. Đủ người thì tắt “Mở đăng ký”.</p>
+      <div class="row">
+        <div class="field" style="flex:2;min-width:200px"><label for="clsName">Tên lớp</label><input id="clsName" placeholder="Công nghệ trong giảng dạy – SPA K21"></div>
+        <div class="field" style="flex:1;min-width:150px"><label for="clsCode">Mã lớp</label><input id="clsCode" style="text-transform:uppercase" placeholder="VD: CNGD-K21"></div>
+        <button type="button" id="btnGenCode" style="align-self:end">Tạo mã</button>
+      </div>
+      <div class="row">
+        <div class="field"><label for="clsGroups">Số nhóm</label><input id="clsGroups" type="number" min="2" max="8" value="6"></div>
+        <div class="field"><label for="clsMax">Tối đa SV/nhóm (0 = không giới hạn)</label><input id="clsMax" type="number" min="0" max="20" value="6"></div>
+        <label class="check" style="align-self:end;padding-bottom:8px"><input type="checkbox" id="clsOpen"> Mở đăng ký</label>
+      </div>
+      <div class="row"><button class="primary" id="btnSaveClass">Lưu lớp</button><span class="status" id="clsStatus"></span></div>
+    </div>
+    <div class="panel">
       <h2>Kết nối Google Sheet</h2>
       <div class="field"><label for="apiUrl">URL Web App (Apps Script, kết thúc bằng /exec)</label><input id="apiUrl" placeholder="https://script.google.com/macros/s/…/exec"></div>
-      <div class="field" style="max-width:220px"><label for="pin">PIN giảng viên</label><input id="pin" type="password" autocomplete="off"></div>
       <div class="row"><button class="primary" id="btnSaveCfg">Lưu & kiểm tra kết nối</button><span class="status" id="cfgStatus"></span></div>
-      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. Để sinh viên đăng nhập an toàn, Apps Script cần Firebase API key và email domain riêng của Jigsaw; Firebase Auth phải cho phép tên miền GitHub Pages của ứng dụng. URL và PIN chỉ lưu trên máy này.</p>
+      <p class="muted small">Không có kết nối thì vẫn dùng được phần phân công và đồng hồ. URL chỉ lưu trên máy này.</p>
     </div>
     <p class="muted small">Rubric chấm điểm nằm ở tab Thiết lập và có thể đổi theo từng buổi.</p>
   </section>
@@ -482,14 +657,7 @@ body.fs .wrap { padding: 12px 20px; }
       </select>
     </div>
   </header>
-  <div id="stLogin" class="panel">
-    <div><p class="label">Tài khoản sinh viên</p><h2>Đăng nhập để chấm điểm</h2><p class="muted small">Dùng MSSV và mật khẩu Jigsaw do giảng viên cấp.</p></div>
-    <div class="field"><label for="stId">Mã số sinh viên</label><input id="stId" inputmode="text" autocomplete="username" placeholder="VD: 2201001"></div>
-    <div class="field"><label for="stPassword">Mật khẩu</label><input id="stPassword" type="password" autocomplete="current-password" placeholder="Mật khẩu tài khoản Jigsaw"></div>
-    <button class="primary" id="btnStLogin">Đăng nhập</button>
-    <p class="status" id="stLoginStatus"></p>
-  </div>
-  <div id="stMain" class="stack" hidden></div>
+  <div id="stMain" class="stack"></div>
 </div>
 </div>
 
@@ -512,40 +680,6 @@ const CONFIG = {
 // Dedicated Jigsaw Firebase project settings. Fill these after creating the project.
 // Do not point this app at a different app's Firebase project.
 // Passwords and auth tokens are never written to localStorage.
-const STUDENT_FIREBASE = {
-  apiKey: "",
-  authDomain: "",
-  projectId: ""
-};
-const STUDENT_EMAIL_DOMAIN = "";
-let studentAuthPromise = null;
-function loadScriptOnce(src) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = src; script.onload = resolve;
-    script.onerror = () => reject(new Error("Không tải được thư viện đăng nhập."));
-    document.head.append(script);
-  });
-}
-async function getStudentAuth() {
-  if (!STUDENT_FIREBASE.apiKey || !STUDENT_FIREBASE.authDomain || !STUDENT_FIREBASE.projectId || !STUDENT_EMAIL_DOMAIN)
-    throw new Error("Firebase riêng cho Jigsaw chưa được cấu hình.");
-  if (!studentAuthPromise) {
-    const base = "https://www.gstatic.com/firebasejs/10.12.2/";
-    studentAuthPromise = (async () => {
-      if (!window.firebase) await loadScriptOnce(base + "firebase-app-compat.js");
-      if (!window.firebase?.auth) await loadScriptOnce(base + "firebase-auth-compat.js");
-      if (!firebase.apps.length) firebase.initializeApp(STUDENT_FIREBASE);
-      const auth = firebase.auth();
-      await auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
-      return auth;
-    })().catch(error => { studentAuthPromise = null; throw error; });
-  }
-  return studentAuthPromise;
-}
-function normalizedStudentId(value) {
-  return String(value || "").trim().toLowerCase().replace(/[^a-z0-9._-]/g, "_");
-}
 const MAX_CRITERIA = 12;
 /** "Tên | điểm" mỗi dòng → [{name, max}] ; trả về {list, error} */
 function parseCriteria(text) {
@@ -569,6 +703,16 @@ const to10 = (picks, list) => Math.round(picks.reduce((a, x) => a + x, 0) / crit
 /* ======================= TIỆN ÍCH ======================= */
 const $ = (s, r = document) => r.querySelector(s);
 const EN = {
+  "Vào hệ thống chấm điểm micro-presentation":"Access the peer assessment system","Mã số sinh viên":"Student ID","Ghi nhớ đăng nhập":"Remember me","Quên mật khẩu?":"Forgot password?",
+  "Chưa có tài khoản? ":"No account yet? ","Đã có tài khoản? ":"Already have an account? ","Đăng ký bằng mã lớp":"Sign up with class code","Cổng giảng viên":"Teacher portal",
+  "Nhập mã lớp giảng viên cung cấp, chọn nhóm và đặt mật khẩu":"Enter the class code from your teacher, pick your group and set a password","Tạo tài khoản":"Create account","Đăng ký":"Sign up",
+  "Mã lớp (GV cung cấp)":"Class code (from your teacher)","Họ và tên":"Full name","Nhập lại mật khẩu":"Confirm password","Mật khẩu (tối thiểu 6 ký tự)":"Password (min. 6 characters)",
+  "Nhập mã lớp để chọn nhóm":"Enter class code to choose a group","Chọn nhóm":"Choose group","Đăng nhập bằng email giảng viên":"Sign in with your teacher email","Email giảng viên":"Teacher email","Quay lại":"Back",
+  "Đổi mật khẩu":"Change password","Mật khẩu hiện tại":"Current password","Mật khẩu mới":"New password","Nhập lại mật khẩu mới":"Confirm new password","Lưu mật khẩu mới":"Save new password","Để sau":"Later",
+  "Mật khẩu mới tối thiểu 6 ký tự.":"New password: at least 6 characters.","Bạn đang dùng mật khẩu tạm (MSSV). Hãy đặt mật khẩu mới.":"You are using a temporary password (your Student ID). Please set a new one.",
+  "Lớp học & đăng ký":"Class & sign-up","Tên lớp":"Class name","Mã lớp":"Class code","Tạo mã":"Generate","Số nhóm":"Groups","Tối đa SV/nhóm (0 = không giới hạn)":"Max students per group (0 = no limit)","Mở đăng ký":"Open sign-up","Lưu lớp":"Save class",
+  "Lấy danh sách SV đã đăng ký":"Load registered students","Dùng nhóm trong danh sách":"Use groups from list","Tài khoản sinh viên":"Student accounts","Tải danh sách":"Load list","Đặt lại mật khẩu":"Reset password",
+  "Nhóm đăng ký":"Registered group","Chưa đăng ký":"Not registered","Lần đăng nhập gần nhất":"Last sign-in","Bạn học (ẩn danh)":"Classmate (anonymous)","Đang đăng nhập…":"Signing in…","Đang tạo tài khoản…":"Creating account…",
   "Các bước":"Workflow steps","1. Thiết lập":"1. Setup","2. Phân công":"2. Plan","3. Trình chiếu":"3. Present","4. Kết quả":"4. Results","Cài đặt":"Settings",
   "Ngôn ngữ":"Language","Giao diện":"Appearance","Giao diện sáng tối":"Color theme","Theo thiết bị":"System","Sáng":"Light","Tối":"Dark",
   "Tên buổi":"Session name","Danh sách sinh viên":"Student list","Chủ đề / công cụ (mỗi dòng một chủ đề, theo thứ tự N1, N2…)":"Topics / tools (one per line, in N1, N2… order)",
@@ -684,16 +828,53 @@ function apiUrl() {
   const p = new URLSearchParams(location.search).get("api");
   return (p || CONFIG.API_URL || store.get("api", "")).trim();
 }
-async function apiGet(params) {
-  const u = new URL(apiUrl());
-  Object.entries(params).forEach(([k, v]) => u.searchParams.set(k, v));
-  const r = await fetch(u.toString(), { cache: "no-store", referrerPolicy: "no-referrer" });
-  return r.json();
+/* ---------- Phiên đăng nhập (giống ArtWrite: 12 giờ, tự đăng xuất sau 45 phút không thao tác;
+   "Ghi nhớ đăng nhập" → localStorage, không ghi nhớ → sessionStorage, mặc định KHÔNG ghi nhớ) ---------- */
+const SKEY = "jigsaw_session", IDLE_KEY = "jigsaw_idle";
+const SESSION_TTL_MS = 12 * 60 * 60 * 1000, IDLE_LIMIT_MS = 45 * 60 * 1000;
+const AUTH = {
+  get() {
+    for (const st of [sessionStorage, localStorage]) {
+      try {
+        const raw = st.getItem(SKEY); if (!raw) continue;
+        const o = JSON.parse(raw);
+        if (!o.exp || o.exp < Date.now() || AUTH.idle()) { AUTH.clear(); return null; }
+        return o.data;
+      } catch {}
+    }
+    return null;
+  },
+  set(data, remember) {
+    const payload = JSON.stringify({ data, exp: Date.now() + SESSION_TTL_MS });
+    AUTH.clear();
+    try { (remember ? localStorage : sessionStorage).setItem(SKEY, payload); } catch {}
+    AUTH.touch();
+  },
+  clear() { try { sessionStorage.removeItem(SKEY); localStorage.removeItem(SKEY); } catch {} },
+  touch() { try { localStorage.setItem(IDLE_KEY, String(Date.now())); } catch {} },
+  idle() { try { const t = parseInt(localStorage.getItem(IDLE_KEY) || "0", 10); return t > 0 && Date.now() - t > IDLE_LIMIT_MS; } catch { return false; } }
+};
+["click", "keydown", "touchstart"].forEach(ev => document.addEventListener(ev, () => { if (AUTH.get()) AUTH.touch(); }, { passive: true }));
+
+/** Mọi lời gọi đều POST + token trong body (không đưa token lên URL) */
+async function api(action, payload = {}) {
+  const s = AUTH.get();
+  const r = await fetch(apiUrl(), { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action, token: s ? s.token : "", ...payload }) });
+  const res = await r.json();
+  if (res && res.error === "SESSION_EXPIRED") { AUTH.clear(); toast("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", "err"); route(); }
+  return res;
 }
-async function apiPost(body) {
-  const r = await fetch(apiUrl(), { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(body) });
-  return r.json();
+async function logout() {
+  try { await api("auth.logout"); } catch {}
+  AUTH.clear(); clearInterval(ST.poll);
+  location.hash = ""; route();
 }
+function toast(msg, kind = "", ms = 3500) {
+  const t = el("div", { class: "toast " + kind, role: "status" }, msg);
+  $("#toasts").append(t); setTimeout(() => t.remove(), ms);
+}
+
 const ERR = {
   pin_sai: "PIN không đúng.", no_session: "Chưa có buổi nào được đồng bộ.", round_not_open: "Lượt này chưa mở.",
   rater_away: "Lượt này bạn đang đi thuyết trình nên không chấm.", wrong_presenter: "Người trình bày không khớp với phân công. Tải lại trang.",
@@ -953,7 +1134,7 @@ async function syncState(quiet) {
   };
   if (!quiet) setStatus(st, "Đang đồng bộ…");
   try {
-    const r = await apiPost({ action: "setState", pin: store.get("pin", ""), state: payload });
+    const r = await api("setState", { state: payload });
     if (!r.ok) throw new Error(errText(r.error));
     S.synced = true; save(); renderHeader();
     setStatus(st, "Đã đồng bộ lúc " + new Date().toLocaleTimeString("vi-VN"), "ok");
@@ -1012,7 +1193,7 @@ async function goRound(k) {
   resetTimer(); renderRun();
   if (apiUrl() && S.synced) {
     try {
-      const r = await apiPost({ action: "setRound", pin: store.get("pin", ""), sessionId: S.sessionId, round: S.currentRound });
+      const r = await api("setRound", { sessionId: S.sessionId, round: S.currentRound });
       setStatus($("#runStatus"), r.ok ? `Đã mở lượt ${S.currentRound} cho SV chấm.` : errText(r.error), r.ok ? "ok" : "err");
     } catch { setStatus($("#runStatus"), "Không gửi được lượt lên Google Sheet.", "err"); }
   } else if (apiUrl()) {
@@ -1059,7 +1240,7 @@ async function loadScores() {
   if (!apiUrl()) return setStatus(st, "Chưa có URL Web App.", "err");
   setStatus(st, "Đang tải…");
   try {
-    const r = await apiGet({ action: "scores", pin: store.get("pin", ""), sessionId: S.sessionId });
+    const r = await api("scores", { sessionId: S.sessionId });
     if (!r.ok) throw new Error(errText(r.error));
     SCORES = r.rows; renderResults();
     setStatus(st, `${SCORES.length} phiếu.`, "ok");
@@ -1175,7 +1356,7 @@ async function submitGv() {
   if (gvPicks.some(p => p === null)) return setStatus(st, "Chọn mức cho đủ các tiêu chí.", "err");
   if (!apiUrl()) return setStatus(st, "Chưa có URL Web App.", "err");
   try {
-    const r = await apiPost({ action: "teacherScore", pin: store.get("pin", ""), sessionId: S.sessionId, round: Number($("#gvRound").value), presenterId: $("#gvPresenter").value, scores: gvPicks });
+    const r = await api("teacherScore", { sessionId: S.sessionId, round: Number($("#gvRound").value), presenterId: $("#gvPresenter").value, scores: gvPicks });
     if (!r.ok) throw new Error(errText(r.error));
     setStatus(st, `Đã lưu ${r.total} điểm.`, "ok");
     gvPicks = rubricForm($("#gvForm"));
@@ -1185,19 +1366,22 @@ async function submitGv() {
 /* ---------- Cài đặt ---------- */
 async function saveCfg() {
   const st = $("#cfgStatus");
-  store.set("api", $("#apiUrl").value.trim()); store.set("pin", $("#pin").value);
+  store.set("api", $("#apiUrl").value.trim());
   renderQr();
   if (!apiUrl()) return setStatus(st, "Đã lưu (chưa có URL).");
   setStatus(st, "Đang kiểm tra…");
-  try { const r = await apiGet({ action: "ping" }); setStatus(st, r.ok ? "Kết nối tốt." : "Phản hồi lạ từ Web App.", r.ok ? "ok" : "err"); }
+  try { const r = await api("ping"); setStatus(st, r.ok ? "Kết nối tốt." : "Phản hồi lạ từ Web App.", r.ok ? "ok" : "err"); }
   catch { setStatus(st, "Không kết nối được. Kiểm tra quyền truy cập Web App là “Anyone”.", "err"); }
 }
 
 /* ---------- Điều hướng ---------- */
 const TABS = ["setup", "plan", "run", "results", "config"];
 function route() {
+  const sess = AUTH.get();
   const h = location.hash.replace("#", "");
-  if (h === "score") { $("#teacher").hidden = true; $("#student").hidden = false; initStudent(); applyTranslations(); return; }
+  $("#login").hidden = !!sess; $("#appWrap").hidden = !sess;
+  if (!sess) { $("#teacher").hidden = true; $("#student").hidden = true; initLogin(); applyTranslations(); return; }
+  if (sess.role === "student") { $("#teacher").hidden = true; $("#student").hidden = false; initStudent(); applyTranslations(); return; }
   if (!teacherReady) initTeacher();
   $("#teacher").hidden = false; $("#student").hidden = true;
   const tab = TABS.includes(h) ? h : "setup";
@@ -1213,7 +1397,7 @@ let teacherReady = false;
 function initTeacher() {
   teacherReady = true;
   bindSetupInputs();
-  $("#apiUrl").value = store.get("api", CONFIG.API_URL); $("#pin").value = store.get("pin", "");
+  $("#apiUrl").value = store.get("api", CONFIG.API_URL);
   // Rubric theo buổi
   if (!S.criteriaText) S.criteriaText = CONFIG.PRESETS.mp;
   const critBox = $("#criteria");
@@ -1252,77 +1436,235 @@ function initTeacher() {
   $("#gvRound").onchange = fillGvPresenters;
   $("#btnGvSubmit").onclick = submitGv;
   $("#btnSaveCfg").onclick = saveCfg;
+  $("#btnLoadAcc").onclick = loadAccounts;
+  $("#btnSaveClass").onclick = saveClass;
+  $("#btnPullRoster").onclick = pullRoster;
+  $("#btnGenCode").onclick = () => { $("#clsCode").value = "MP-" + Math.random().toString(36).slice(2, 7).toUpperCase(); };
+  loadClass();
   if (!S.groups.length) useChosenGroups();  // mở ra đã có phân công mẫu
   else recompute();
   renderHeader(); resetTimer(); renderGvSelectors();
 }
 
+/* ======================= ĐĂNG NHẬP / ĐĂNG KÝ ======================= */
+let loginReady = false, signupMode = false;
+const overlay = (on, msg) => { $("#overlay").hidden = !on; if (msg) $("#overlayMsg").textContent = msg; };
+function setMode(signup) {
+  signupMode = signup;
+  ["#fCode", "#fName", "#fGroup", "#fPw2"].forEach(q => { $(q).hidden = !signup; });
+  $("#rowRemember").hidden = signup;
+  $("#authTitle").textContent = signup ? "Đăng ký" : "Đăng nhập";
+  $("#authSub").textContent = signup ? "Nhập mã lớp giảng viên cung cấp, chọn nhóm và đặt mật khẩu" : "Vào hệ thống chấm điểm micro-presentation";
+  $("#liSubmitText").textContent = signup ? "Tạo tài khoản" : "Đăng nhập";
+  $("#switchWrap").replaceChildren(signup ? "Đã có tài khoản? " : "Chưa có tài khoản? ",
+    el("button", { type: "button", class: "link", onclick: () => setMode(!signup) }, signup ? "Đăng nhập" : "Đăng ký bằng mã lớp"));
+  $("#liPw").setAttribute("autocomplete", signup ? "new-password" : "current-password");
+  $("#liPw").placeholder = signup ? "Mật khẩu (tối thiểu 6 ký tự)" : "Mật khẩu";
+  (signup ? $("#suCode") : $("#liId")).focus();
+}
+async function loadGroups() {
+  const code = $("#suCode").value.trim().toUpperCase(); const sel = $("#suGroup");
+  if (!code) return;
+  sel.replaceChildren(el("option", { value: "" }, "Đang tải nhóm…"));
+  try {
+    const r = await api("classInfo", { classCode: code });
+    if (!r.ok) { sel.replaceChildren(el("option", { value: "" }, "Mã lớp chưa đúng")); return toast(r.error, "err"); }
+    sel.replaceChildren(el("option", { value: "" }, `Chọn nhóm${r.name ? " – " + r.name : ""}`),
+      ...r.groups.map(g => {
+        const full = g.max && g.count >= g.max;
+        return el("option", { value: g.group, disabled: full ? "" : null }, `Nhóm ${g.group} · ${g.count}${g.max ? "/" + g.max : ""} SV${full ? " (đủ)" : ""}`);
+      }));
+  } catch { sel.replaceChildren(el("option", { value: "" }, "Không tải được nhóm")); }
+}
+function initLogin() {
+  if (loginReady) return; loginReady = true;
+  document.querySelectorAll(".pw-eye").forEach(b => b.onclick = () => {
+    const inp = $("#" + b.dataset.for); inp.type = inp.type === "password" ? "text" : "password";
+    b.setAttribute("aria-pressed", String(inp.type === "text"));
+  });
+  $("#toSignup").onclick = () => setMode(true);
+  $("#suCode").addEventListener("change", loadGroups);
+  $("#liForgot").onclick = () => toast("Báo giảng viên bấm “Đặt lại mật khẩu”. Mật khẩu tạm sẽ là MSSV của bạn.", "", 6000);
+  $("#liId").value = store.get("stId", "");
+  let busy = false;
+  $("#stuForm").onsubmit = async e => {
+    e.preventDefault(); if (busy) return;
+    const id = $("#liId").value.trim(), pw = $("#liPw").value;
+    if (!apiUrl()) return toast("Trang chưa được kết nối với máy chủ.", "err");
+    let action = "auth.studentLogin", payload = { studentId: id, password: pw };
+    if (signupMode) {
+      const code = $("#suCode").value.trim(), name = $("#suName").value.trim(), group = $("#suGroup").value;
+      if (!code || !name || !id || !group || !pw) return toast("Vui lòng nhập đầy đủ thông tin và chọn nhóm.", "err");
+      if (pw.trim().length < 6) return toast("Mật khẩu phải có ít nhất 6 ký tự.", "err");
+      if (pw !== $("#liPw2").value) return toast("Hai lần nhập mật khẩu chưa khớp.", "err");
+      action = "auth.studentSignup"; payload = { classCode: code, name, studentId: id, group: Number(group), password: pw };
+    } else if (!id || !pw) return toast("Vui lòng nhập đầy đủ thông tin.", "err");
+    busy = true; overlay(true, signupMode ? "Đang tạo tài khoản…" : "Đang đăng nhập…");
+    try {
+      const res = await api(action, payload);
+      if (!res.ok) throw new Error(res.error || "Đăng nhập thất bại.");
+      store.set("stId", id);
+      AUTH.set({ role: "student", ...res.data }, !signupMode && $("#liRemember").checked);
+      const mustChange = !signupMode && pw === id;      // mật khẩu tạm do GV đặt lại
+      $("#liPw").value = ""; $("#liPw2").value = "";
+      location.hash = ""; route();
+      if (mustChange) openPwModal(true, pw);
+    } catch (err) { toast(err.message || "Không kết nối được máy chủ.", "err", 5000); }
+    finally { busy = false; overlay(false); }
+  };
+  $("#teacherPortal").onclick = () => { $("#tModal").hidden = false; $("#tEmail").focus(); };
+  $("#tClose").onclick = () => { $("#tModal").hidden = true; };
+  $("#tModal").addEventListener("click", e => { if (e.target.id === "tModal") $("#tModal").hidden = true; });
+  let tBusy = false;
+  $("#tForm").onsubmit = async e => {
+    e.preventDefault(); if (tBusy) return;
+    const email = $("#tEmail").value.trim(), pw = $("#tPw").value;
+    if (!email || !pw) return toast("Nhập email và mật khẩu.", "err");
+    tBusy = true; overlay(true, "Đang xác thực giảng viên…");
+    try {
+      const res = await api("auth.teacherLogin", { email, password: pw });
+      if (!res.ok) throw new Error(res.error || "Đăng nhập thất bại.");
+      AUTH.set({ role: "teacher", ...res.data }, $("#liRemember").checked);
+      $("#tPw").value = ""; $("#tModal").hidden = true;
+      location.hash = "#setup"; route();
+    } catch (err) { toast(err.message || "Không kết nối được máy chủ.", "err", 5000); }
+    finally { tBusy = false; overlay(false); }
+  };
+}
+document.addEventListener("click", e => { if (e.target.closest("[data-logout]")) logout(); });
+
+/* ---------- Đổi mật khẩu (SV) ---------- */
+function openPwModal(forced, oldPw) {
+  $("#pwModal").hidden = false;
+  $("#cpOld").value = oldPw || "";
+  $("#pwSub").textContent = forced ? "Bạn đang dùng mật khẩu tạm (MSSV). Hãy đặt mật khẩu mới." : "Mật khẩu mới tối thiểu 6 ký tự.";
+  $("#pwClose").hidden = !!forced;
+  (forced ? $("#cpNew") : $("#cpOld")).focus();
+}
+(function initPwModal() {
+  document.querySelectorAll("#pwModal .pw-eye").forEach(b => b.onclick = () => { const inp = $("#" + b.dataset.for); inp.type = inp.type === "password" ? "text" : "password"; });
+  $("#pwClose").onclick = () => { $("#pwModal").hidden = true; };
+  const cpBtn = $("#btnChangePw"); if (cpBtn) cpBtn.onclick = () => openPwModal(false);
+  $("#pwForm").onsubmit = async e => {
+    e.preventDefault();
+    const o = $("#cpOld").value, n = $("#cpNew").value;
+    if (!o || !n) return toast("Nhập đủ mật khẩu hiện tại và mật khẩu mới.", "err");
+    if (n.trim().length < 6) return toast("Mật khẩu mới phải có ít nhất 6 ký tự.", "err");
+    if (n !== $("#cpNew2").value) return toast("Hai lần nhập mật khẩu mới chưa khớp.", "err");
+    overlay(true, "Đang lưu…");
+    try {
+      const r = await api("auth.changePassword", { oldPassword: o, newPassword: n });
+      if (!r.ok) throw new Error(r.error);
+      ["#cpOld", "#cpNew", "#cpNew2"].forEach(q => { $(q).value = ""; });
+      $("#pwModal").hidden = true; toast("Đã đổi mật khẩu.", "ok");
+    } catch (err) { toast(err.message || "Không lưu được.", "err"); }
+    finally { overlay(false); }
+  };
+})();
+
+/* ---------- GV: lớp học & danh sách đăng ký ---------- */
+async function loadClass() {
+  try {
+    const r = await api("getClass"); if (!r.ok) return;
+    $("#clsName").value = r.cls.name; $("#clsCode").value = r.cls.code; $("#clsGroups").value = r.cls.groups;
+    $("#clsMax").value = r.cls.maxPerGroup; $("#clsOpen").checked = r.cls.open;
+  } catch {}
+}
+async function saveClass() {
+  const st = $("#clsStatus"); setStatus(st, "Đang lưu…");
+  try {
+    const r = await api("setClass", { cls: { name: $("#clsName").value, code: $("#clsCode").value, groups: Number($("#clsGroups").value), maxPerGroup: Number($("#clsMax").value), open: $("#clsOpen").checked } });
+    if (!r.ok) throw new Error(r.error);
+    $("#clsCode").value = r.cls.code;
+    setStatus(st, r.cls.open ? `Đã lưu. SV đăng ký bằng mã ${r.cls.code}.` : "Đã lưu. Đăng ký đang khoá.", "ok");
+  } catch (e) { setStatus(st, e.message || "Không lưu được.", "err"); }
+}
+async function pullRoster() {
+  const st = $("#setupStatus"); setStatus(st, "Đang lấy danh sách đăng ký…");
+  try {
+    const r = await api("accounts"); if (!r.ok) throw new Error(errText(r.error));
+    if (!r.rows.length) return setStatus(st, "Chưa có SV nào đăng ký.", "err");
+    const rows = r.rows.slice().sort((a, b) => (a.group - b.group) || String(a.name).localeCompare(String(b.name), "vi"));
+    S.studentsText = rows.map(x => `${x.studentId}, ${x.name}, ${x.group || ""}`).join("\n");
+    $("#students").value = S.studentsText; countStudents(); save();
+    useChosenGroups();
+  } catch (e) { setStatus(st, e.message || "Không lấy được danh sách.", "err"); }
+}
+
+/* ---------- GV: tài khoản SV ---------- */
+async function loadAccounts() {
+  const st = $("#accStatus"); setStatus(st, "Đang tải…");
+  try {
+    const r = await api("accounts"); if (!r.ok) throw new Error(errText(r.error));
+    const acc = new Map(r.rows.map(x => [String(x.studentId).toLowerCase(), x]));
+    const t = $("#accTable"); t.replaceChildren();
+    t.append(el("thead", {}, el("tr", {}, ["Nhóm (buổi này)", "MSSV", "Họ tên", "Nhóm đăng ký", "Lần đăng nhập gần nhất", ""].map(h => el("th", {}, h)))));
+    const tb = el("tbody"); let on = 0, total = 0;
+    S.groups.forEach((g, gi) => g.members.forEach(m => {
+      total++; const a = acc.get(String(m.id).toLowerCase()); if (a) on++;
+      const btn = a ? el("button", { type: "button", onclick: async () => {
+        btn.disabled = true;
+        const x = await api("resetStudent", { studentId: m.id });
+        if (x.ok) { toast(`Đã đặt lại: mật khẩu tạm của ${m.name} là ${m.id}.`, "ok", 6000); loadAccounts(); } else { toast(errText(x.error), "err"); btn.disabled = false; }
+      } }, "Đặt lại mật khẩu") : "";
+      tb.append(el("tr", {}, el("td", {}, gName(gi)), el("td", { class: "num" }, m.id), el("td", {}, m.name),
+        el("td", {}, a ? (a.group ? "N" + a.group : "—") : el("span", { class: "muted" }, "Chưa đăng ký")),
+        el("td", { class: "num" }, a && a.lastLogin ? new Date(a.lastLogin).toLocaleString("vi-VN") : "—"), el("td", {}, btn)));
+    }));
+    t.append(tb); setStatus(st, `${on}/${total} SV đã đăng ký tài khoản.`, "ok");
+  } catch (e) { setStatus(st, e.message, "err"); }
+}
+
 /* ======================= TRANG SINH VIÊN ======================= */
 let ST = { state: null, me: null, poll: null, round: -1, picks: [], dirty: false, pendingState: null, historyRows: [], historyLoaded: false, lastSent: null };
 function initStudent() {
-  if (ST.inited) return; ST.inited = true;
-  $("#stId").value = store.get("stId", "");
-  $("#stPassword").value = "";
-  $("#btnStLogin").onclick = studentLogin;
-  ["#stId", "#stPassword"].forEach(selector => $(selector).addEventListener("keydown", e => { if (e.key === "Enter") studentLogin(); }));
-  if (!apiUrl()) { setStatus($("#stLoginStatus"), "Trang chưa được kết nối với Google Sheet. Báo GV kiểm tra link QR.", "err"); $("#btnStLogin").disabled = true; }
+  const s = AUTH.get();
+  ST.me = { id: s.id, name: s.name };
+  $("#stSession").textContent = s.name + " · MSSV " + s.id;
+  refreshStudent();
+  clearInterval(ST.poll); ST.poll = setInterval(pollState, 10000);
 }
-async function fetchState(idToken) {
-  const r = await apiGet({ action: "state", idToken });
+async function fetchState() {
+  const r = await api("state");
   if (!r.ok) throw new Error(errText(r.error));
   return r.state;
 }
-async function studentLogin() {
-  const id = $("#stId").value.trim(), password = $("#stPassword").value, s = $("#stLoginStatus"), button = $("#btnStLogin");
-  if (!id) return setStatus(s, "Nhập MSSV.", "err");
-  if (!password) return setStatus(s, "Nhập mật khẩu.", "err");
-  button.disabled = true; setStatus(s, "Đang tải…");
+async function refreshStudent() {
   try {
-    const auth = await getStudentAuth();
-    if (auth.currentUser) await auth.signOut();
-    const credential = await auth.signInWithEmailAndPassword(normalizedStudentId(id) + "@" + STUDENT_EMAIL_DOMAIN, password);
-    const signedInId = normalizedStudentId(String(credential.user.email || "").split("@")[0]);
-    if (signedInId !== normalizedStudentId(id)) { await auth.signOut(); throw new Error("MSSV hoặc mật khẩu không đúng."); }
-    const idToken = await credential.user.getIdToken();
-    const state = await fetchState(idToken);
-    const me = memberById(state, id);
-    if (!me) { await auth.signOut(); return setStatus(s, "Không tìm thấy MSSV này trong buổi " + state.sessionName + ".", "err"); }
-    store.set("stId", id);
-    ST.state = state; ST.me = me; ST.round = -1;
-    if (state.criteria && state.criteria.length) CONFIG.CRITERIA = state.criteria;
-    $("#stPassword").value = "";
-    $("#stLogin").hidden = true; $("#stMain").hidden = false;
-    renderStudent();
-    loadStudentHistory();
-    clearInterval(ST.poll); ST.poll = setInterval(pollState, 8000);
+    const st = await fetchState();
+    ST.state = st; if (st.criteria && st.criteria.length) CONFIG.CRITERIA = st.criteria;
+    renderStudent(); loadStudentHistory();
   } catch (e) {
-    let message = e.message || "Không kết nối được.";
-    if (/auth\/unauthorized-domain/.test(e.code || "")) message = "Tên miền này chưa được bật đăng nhập Firebase. Báo giảng viên thêm l2practice.github.io vào Authorized domains.";
-    else if (/auth\/(invalid-credential|wrong-password|user-not-found|invalid-email|user-disabled|too-many-requests)/.test(e.code || "")) message = "MSSV hoặc mật khẩu không đúng.";
-    setStatus(s, message, "err");
-  } finally { button.disabled = false; }
+    const box = $("#stMain");
+    box.replaceChildren(el("div", { class: "panel" },
+      el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, ST.me.name),
+        el("div", { class: "row" }, el("button", { type: "button", onclick: () => openPwModal(false) }, "Đổi mật khẩu"), el("button", { type: "button", onclick: logout }, "Đăng xuất")))),
+      el("div", { class: "notice" }, el("p", { class: "big" }, e.message || "Chưa có buổi nào đang diễn ra."), el("button", { type: "button", onclick: refreshStudent }, "Tải lại")));
+    applyTranslations(box);
+  }
 }
 async function pollState() {
+  const s = AUTH.get();
+  if (!s || s.role !== "student") { clearInterval(ST.poll); return; }
   try {
-    const auth = await getStudentAuth();
-    if (!auth.currentUser) return studentLogout();
-    const state = await fetchState(await auth.currentUser.getIdToken());
+    const state = await fetchState();
+    if (!ST.state) { ST.state = state; renderStudent(); return; }
     const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound;
     if (!changed) { ST.state = state; return; }
     if (!ST.dirty) { ST.state = state; renderStudent(); }
     else { ST.pendingState = state; const notice = $("#stNewRound"); if (notice) notice.hidden = false; }
   } catch {}
 }
+/** Lịch sử: mình đã chấm ai + mình được chấm bao nhiêu (người chấm ẩn danh) */
 async function loadStudentHistory() {
   const status = $("#historyStatus");
   if (!status) return;
   setStatus(status, "Đang tải lịch sử từ Google Sheet…");
   try {
-    const auth = await getStudentAuth();
-    if (!auth.currentUser) throw new Error("student_auth_required");
-    const r = await apiGet({ action: "scores", idToken: await auth.currentUser.getIdToken() });
+    const r = await api("myHistory");
     if (!r.ok) throw new Error(errText(r.error));
-    ST.historyRows = Array.isArray(r.rows) ? r.rows : [];
+    const me = ST.me.id;
+    ST.historyRows = r.given.map(x => ({ ...x, raterId: me, role: "peer" })).concat(r.received.map(x => ({ ...x, presenterId: me })));
     ST.historyLoaded = true;
     renderStudentHistory();
   } catch {
@@ -1330,13 +1672,7 @@ async function loadStudentHistory() {
     if (status.isConnected) setStatus(status, "Chưa thể tải lịch sử điểm.", "err");
   }
 }
-async function studentLogout() {
-  clearInterval(ST.poll); ST.poll = null;
-  try { const auth = await getStudentAuth(); if (auth.currentUser) await auth.signOut(); } catch {}
-  ST.state = null; ST.me = null; ST.historyRows = []; ST.historyLoaded = false; ST.dirty = false;
-  $("#stMain").replaceChildren(); $("#stMain").hidden = true; $("#stLogin").hidden = false; $("#stPassword").value = "";
-  setStatus($("#stLoginStatus"), "");
-}
+const studentLogout = logout;
 function sessionLabel(row) {
   if (row.sessionName) return row.sessionName;
   const date = String(row.sessionId || "").match(/(\d{4}-\d{2}-\d{2})/);
@@ -1365,7 +1701,7 @@ function renderStudentHistory() {
       el("span", { class:"muted small" }, `${sessionLabel(r)} · Lượt ${r.round || "—"}`),
       el("span", {}, `Điểm bạn đã chấm: ${r.total ?? "—"}/10`))),
     list("Điểm nhận được", received, r => el("div", { class:"history-item" },
-      el("b", {}, r.role === "teacher" ? "Giảng viên" : (r.raterName || r.raterId || "Bạn học")),
+      el("b", {}, r.role === "teacher" ? "Giảng viên" : "Bạn học (ẩn danh)"),
       el("span", { class:"muted small" }, `${sessionLabel(r)} · Lượt ${r.round || "—"}`),
       el("span", { class:"history-points" }, `${r.total ?? "—"} / 10`)))));
 }
@@ -1379,7 +1715,7 @@ function renderStudent({ carry = null } = {}) {
   box.append(el("div", { class: "panel" },
     el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, me.name), el("span", { class: "chip", style: `--gc:${gColor(me.groupIndex)}` }, "Bàn " + gName(me.groupIndex))),
     el("p", { class: "muted small" }, `Nhóm bạn trình bày: ${g.topic}`),
-    el("button", { type: "button", onclick: studentLogout }, "Đăng xuất")));
+    el("div", { class: "row" }, el("button", { type: "button", onclick: () => openPwModal(false) }, "Đổi mật khẩu"), el("button", { type: "button", onclick: studentLogout }, "Đăng xuất"))));
   box.append(el("details", { class:"panel", id:"studentHistory" },
     el("summary", { class:"row history-toggle", style:"justify-content:space-between" }, el("h2", {}, "Lịch sử qua các tuần"), el("span", { class:"status", id:"historyStatus" }, "Đang tải lịch sử từ Google Sheet…")),
     el("div", { id:"studentHistoryContent" })));
@@ -1430,9 +1766,7 @@ function renderStudent({ carry = null } = {}) {
     if (ST.picks.some(x => x === null)) return setStatus(status, "Chọn mức cho đủ các tiêu chí.", "err");
     send.disabled = true; setStatus(status, "Đang gửi…");
     try {
-      const auth = await getStudentAuth();
-      if (!auth.currentUser) throw new Error("student_auth_required");
-      const r = await apiPost({ action: "submitScore", idToken: await auth.currentUser.getIdToken(), sessionId: st.sessionId, round: k, raterId: me.id, presenterId: p.id, scores: ST.picks, comment: cmt.value });
+      const r = await api("submitScore", { sessionId: st.sessionId, round: k, presenterId: p.id, scores: ST.picks, comment: cmt.value });
       if (!r.ok) throw new Error(errText(r.error));
       ST.lastSent = { sessionId:st.sessionId, round:k, presenterId:p.id, total:r.total }; ST.dirty = false;
       setStatus(status, `Đã gửi ${r.total} điểm. Cảm ơn bạn!`, "ok");
