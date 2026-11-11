@@ -389,6 +389,17 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
 @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
 .clock button.primary { background: #ffb162; color: #1b2632; border-color: #ffb162; }
 .link, .pw-eye, .auth-card button.link { box-shadow: none; }
+.class-select { min-width: 200px; max-width: 320px; font-weight: 700; }
+.timeset { gap: 10px; }
+.tfield { display: inline-flex; align-items: center; gap: 6px; font-size: .9rem; color: #eee9df; }
+.tfield input { width: 72px; padding: 6px 8px; background: #2c3b4d; color: #eee9df; border-color: #3d4d62; text-align: center; }
+.timeset button { padding: 6px 12px; font-size: .85rem; }
+.qr-wait { display: grid; gap: 8px; justify-items: center; text-align: center; padding: 20px 12px; max-width: 300px; }
+.qr-wait b { font-size: 2.4rem; font-variant-numeric: tabular-nums; color: var(--truffle); }
+.qr-wait span { color: var(--muted); }
+.listen { border: 1px dashed var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 6px; background: var(--surface); }
+.badge-a { font-size: .75rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.badge-a.on { background: #dfeee3; color: #2f5d3a; }
 </style>
 </head>
 <body>
@@ -467,6 +478,8 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
       <p class="muted small" id="sessionLine"></p>
     </div>
     <div class="toolbar-controls" aria-label="Giao diện">
+      <label class="sr-only" for="classSelect">Lớp đang dạy</label>
+      <select id="classSelect" class="class-select" aria-label="Lớp đang dạy"><option value="">Đang tải lớp…</option></select>
       <label class="sr-only" for="languageSelect">Ngôn ngữ</label>
       <select id="languageSelect" aria-label="Ngôn ngữ">
         <option value="vi">Tiếng Việt</option><option value="en">English</option>
@@ -573,6 +586,12 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
           <div class="phase" id="runPhase">Chưa bắt đầu</div>
           <div class="time" id="runTime">06:00</div>
           <div class="bar" aria-hidden="true"><i id="runBar"></i></div>
+          <div class="row timeset" style="justify-content:center">
+            <label class="tfield" for="runPresentMin">Trình bày <input id="runPresentMin" type="number" min="0.5" max="60" step="0.5"> phút</label>
+            <label class="tfield" for="runQaMin">Hỏi đáp <input id="runQaMin" type="number" min="0" max="30" step="0.5"> phút</label>
+            <button type="button" id="btnMinus" title="Bớt 1 phút ở giai đoạn đang chạy">−1 phút</button>
+            <button type="button" id="btnPlus" title="Thêm 1 phút ở giai đoạn đang chạy">+1 phút</button>
+          </div>
           <div class="row runhide-not" style="justify-content:center">
             <button id="btnPrev">◀ Lượt trước</button>
             <button class="primary" id="btnStart">Bắt đầu</button>
@@ -589,7 +608,8 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
       </div>
       <div class="qrbox">
         <h3>Quét để chấm điểm</h3>
-        <div class="qr" id="qr"></div>
+        <div class="qr-wait" id="qrWait"><b id="qrWaitTime">--:--</b><span>Mã QR và phiếu chấm sẽ mở khi còn 2 phút trình bày. Hãy lắng nghe bạn trình bày.</span></div>
+        <div class="qr" id="qr" hidden></div>
         <p class="small">Đăng nhập an toàn để chấm và xem lịch sử điểm</p>
         <p class="url" id="qrUrl"></p>
       </div>
@@ -602,6 +622,8 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
       <div class="row" style="justify-content:space-between">
         <h2>Điểm micro-present</h2>
         <div class="row">
+          <label class="sr-only" for="resSession">Chọn buổi</label>
+          <select id="resSession" aria-label="Chọn buổi" style="min-width:240px"><option value="">Buổi hiện tại</option></select>
           <button class="primary" id="btnLoadScores">Tải điểm</button>
           <button id="btnCsv">Xuất CSV</button>
           <span class="status" id="resStatus"></span>
@@ -628,7 +650,7 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
         <h2>Tài khoản sinh viên</h2>
         <div class="row"><button id="btnLoadAcc">Tải danh sách</button><span class="status" id="accStatus"></span></div>
       </div>
-      <p class="muted small">SV tự đăng ký bằng mã lớp. SV quên mật khẩu: bấm “Đặt lại” → mật khẩu tạm là chính MSSV; SV đăng nhập sẽ được yêu cầu đổi mật khẩu.</p>
+      <p class="muted small">Danh sách SV đã đăng ký vào <b>lớp đang chọn</b>. SV quên mật khẩu: bấm “Đặt lại mật khẩu” → mật khẩu tạm là chính MSSV; SV đăng nhập sẽ được yêu cầu đổi mật khẩu.</p>
       <div class="tablebox"><table id="accTable"></table></div>
     </div>
   </section>
@@ -636,17 +658,28 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
   <!-- Cài đặt -->
   <section id="tab-config" class="stack" hidden>
     <div class="panel">
-      <h2>Lớp học & đăng ký</h2>
-      <p class="muted small">SV đăng ký bằng mã lớp, tự chọn nhóm và tự đặt mật khẩu. Đủ người thì tắt “Mở đăng ký”.</p>
+      <div class="row" style="justify-content:space-between">
+        <h2>Lớp học của tôi</h2>
+        <button type="button" class="primary" id="btnNewClass">+ Tạo lớp mới</button>
+      </div>
+      <p class="muted small">Mỗi lớp có mã đăng ký riêng. SV đăng ký bằng mã lớp và tự chọn nhóm; một SV học nhiều lớp dùng chung một tài khoản. Chọn lớp đang dạy ở góc trên.</p>
+      <div class="tablebox"><table id="clsTable"></table></div>
+    </div>
+    <div class="panel" id="clsFormPanel">
+      <h2 id="clsFormTitle">Tạo lớp mới</h2>
       <div class="row">
-        <div class="field" style="flex:2;min-width:200px"><label for="clsName">Tên lớp</label><input id="clsName" placeholder="Công nghệ trong giảng dạy – SPA K21"></div>
-        <div class="field" style="flex:1;min-width:150px"><label for="clsCode">Mã lớp</label><input id="clsCode" style="text-transform:uppercase" placeholder="VD: CNGD-K21"></div>
-        <button type="button" id="btnGenCode" style="align-self:end">Tạo mã</button>
+        <div class="field" style="flex:2;min-width:220px"><label for="clsName">Tên lớp</label><input id="clsName" placeholder="Công nghệ trong giảng dạy – SPA K21"></div>
+        <div class="field" style="flex:1;min-width:150px"><label for="clsSemester">Học kỳ</label><input id="clsSemester" placeholder="HK1 2026–2027"></div>
       </div>
       <div class="row">
+        <div class="field" style="flex:1;min-width:150px"><label for="clsCode">Mã lớp</label><input id="clsCode" style="text-transform:uppercase" placeholder="VD: CNGD-K21"></div>
+        <button type="button" id="btnGenCode" style="align-self:end">Tạo mã</button>
         <div class="field"><label for="clsGroups">Số nhóm</label><input id="clsGroups" type="number" min="2" max="8" value="6"></div>
         <div class="field"><label for="clsMax">Tối đa SV/nhóm (0 = không giới hạn)</label><input id="clsMax" type="number" min="0" max="20" value="6"></div>
-        <label class="check" style="align-self:end;padding-bottom:8px"><input type="checkbox" id="clsOpen"> Mở đăng ký</label>
+      </div>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="clsOpen" checked> Mở đăng ký</label>
+        <label class="check"><input type="checkbox" id="clsArchived"> Lưu trữ (kết thúc lớp)</label>
       </div>
       <div class="row"><button class="primary" id="btnSaveClass">Lưu lớp</button><span class="status" id="clsStatus"></span></div>
     </div>
@@ -721,6 +754,11 @@ const to10 = (picks, list) => Math.round(picks.reduce((a, x) => a + x, 0) / crit
 /* ======================= TIỆN ÍCH ======================= */
 const $ = (s, r = document) => r.querySelector(s);
 const EN = {
+  "Lớp đang dạy":"Current class","Đang tải lớp…":"Loading classes…","Chưa có lớp – tạo ở Cài đặt":"No class yet – create one in Settings","Đã lưu trữ":"Archived",
+  "Lớp học của tôi":"My classes","+ Tạo lớp mới":"+ New class","Tạo lớp mới":"New class","Sửa lớp: ":"Edit class: ","Học kỳ":"Semester","Lưu trữ (kết thúc lớp)":"Archive (class ended)",
+  "Mã QR và phiếu chấm sẽ mở khi còn 2 phút trình bày. Hãy lắng nghe bạn trình bày.":"The QR code and rating form open when 2 minutes of the presentation remain. Please listen first.",
+  "Hãy lắng nghe bạn trình bày.":"Please listen to the presenter.","Phiếu chấm sẽ tự mở khi còn 2 phút. Không cần tải lại trang.":"The rating form opens automatically with 2 minutes left. No need to refresh.",
+  "−1 phút":"−1 min","+1 phút":"+1 min","Đang làm việc với lớp ":"Now working with class ","Nhóm đăng ký":"Registered group",
   "Vào hệ thống chấm điểm micro-presentation":"Access the peer assessment system","Mã số sinh viên":"Student ID","Ghi nhớ đăng nhập":"Remember me","Quên mật khẩu?":"Forgot password?",
   "Chưa có tài khoản? ":"No account yet? ","Đã có tài khoản? ":"Already have an account? ","Đăng ký bằng mã lớp":"Sign up with class code","Cổng giảng viên":"Teacher portal",
   "Nhập mã lớp giảng viên cung cấp, chọn nhóm và đặt mật khẩu":"Enter the class code from your teacher, pick your group and set a password","Tạo tài khoản":"Create account","Đăng ký":"Sign up",
@@ -895,7 +933,7 @@ function toast(msg, kind = "", ms = 3500) {
 
 const ERR = {
   pin_sai: "PIN không đúng.", no_session: "Chưa có buổi nào được đồng bộ.", round_not_open: "Lượt này chưa mở.",
-  rater_away: "Lượt này bạn đang đi thuyết trình nên không chấm.", wrong_presenter: "Người trình bày không khớp với phân công. Tải lại trang.",
+  scoring_not_open: "Phiếu chấm chưa mở. Hãy lắng nghe bạn trình bày, phiếu sẽ mở khi còn 2 phút.", rater_away: "Lượt này bạn đang đi thuyết trình nên không chấm.", wrong_presenter: "Người trình bày không khớp với phân công. Tải lại trang.",
   rater_not_found: "Không tìm thấy MSSV trong buổi này.", presenter_not_found: "Không tìm thấy người trình bày.", bad_scores: "Điểm chưa hợp lệ.",
   student_auth_required: "Vui lòng đăng nhập lại.", student_auth_invalid: "Phiên đăng nhập hết hạn. Hãy đăng nhập lại.", student_not_allowed: "Tài khoản này không có quyền truy cập.", firebase_not_configured: "Firebase chưa được cấu hình trong Apps Script."
 };
@@ -982,11 +1020,19 @@ const SAMPLE_STUDENTS = [
 ].join("\n");
 const SAMPLE_TOPICS = ["ChatGPT", "Gemini", "Claude", "Copilot", "Perplexity", "NotebookLM"].join("\n");
 
+/* Mỗi lớp giữ phân công/buổi/rubric riêng trên máy GV: khoá "state_<classId>" */
+const CLS = { list: [], current: null };
+const stateKey = () => "state_" + (CLS.current ? CLS.current.classId : "local");
+function freshState(cls) {
+  const G = (cls && cls.groups) || 6;
+  return { sessionName: "Buổi 1", studentsText: "", topicsText: SAMPLE_TOPICS, groupCount: G, rounds: G - 1, presentMin: 6, qaMin: 2,
+           groups: [], rotation: {}, roundsEff: 0, currentRound: 0, sessionId: "", criteriaText: CONFIG.PRESETS.mp };
+}
 let S = store.get("state", null) || {
   sessionName: "Buổi 2 – Chatbot cho GV (dữ liệu mẫu)", studentsText: SAMPLE_STUDENTS, topicsText: SAMPLE_TOPICS,
   groupCount: 6, rounds: 5, presentMin: 6, qaMin: 2, groups: [], rotation: {}, roundsEff: 0, currentRound: 0, sessionId: ""
 };
-const save = () => store.set("state", S);
+const save = () => store.set(stateKey(), S);
 
 function bindSetupInputs() {
   const map = { sessionName: "sessionName", students: "studentsText", topics: "topicsText", groupCount: "groupCount", rounds: "rounds", presentMin: "presentMin", qaMin: "qaMin" };
@@ -1015,8 +1061,10 @@ function recompute() {
 function applyTopicList(list) {
   S.groups.forEach((g, i) => { g.topic = list[i] || ("Chủ đề " + (i + 1)); });
 }
+const sessionPrefix = () => (CLS.current ? slug(CLS.current.code) + "-" : "") + slug(S.sessionName) + "-";
 function newSession() {
-  S.sessionId = slug(S.sessionName) + "-" + today();
+  S.sessionId = sessionPrefix() + today();
+  S.openRound = 0;
   S.currentRound = 0;
   S.synced = false;
   renderHeader();
@@ -1144,9 +1192,11 @@ async function syncState(quiet) {
   if (crit.error) return setStatus(st, "Rubric chưa hợp lệ (tab Thiết lập): " + crit.error, "err");
   CONFIG.CRITERIA = crit.list;
   // Đổi tên buổi (tuần mới) → mã buổi mới, điểm tuần mới không lẫn với tuần cũ
-  if (!S.sessionId || !S.sessionId.startsWith(slug(S.sessionName) + "-")) { newSession(); renderRun(); }
+  if (!CLS.current) return setStatus(st, "Chưa chọn lớp (góc trên). Tạo lớp ở tab Cài đặt.", "err");
+  if (!S.sessionId || !S.sessionId.startsWith(sessionPrefix())) { newSession(); renderRun(); }
   const payload = {
-    sessionId: S.sessionId, sessionName: S.sessionName, rounds: S.roundsEff, currentRound: S.currentRound,
+    classId: CLS.current.classId, className: CLS.current.name,
+    sessionId: S.sessionId, sessionName: S.sessionName, rounds: S.roundsEff, currentRound: S.currentRound, openRound: S.openRound || 0,
     criteria: CONFIG.CRITERIA, rotation: S.rotation,
     groups: S.groups.map(g => ({ topic: g.topic, members: g.members.map(m => ({ id: m.id, name: m.name })) }))
   };
@@ -1176,6 +1226,26 @@ function beep(times = 1) {
   } catch {}
 }
 const presentSec = () => Math.round((Number(S.presentMin) || 6) * 60);
+const QR_LEAD = 120;   // mở QR + phiếu chấm khi còn 2 phút trình bày
+function scoringGateOpen() {
+  if (!S.currentRound) return false;
+  if (T.phase === "qa" || T.phase === "done") return true;
+  return T.phase === "present" && T.remain <= Math.min(QR_LEAD, presentSec()) && (T.running || T.remain < presentSec());
+}
+function adjustMinutes(delta) {
+  if (T.phase === "done") return;
+  T.remain = Math.max(5, T.remain + delta * 60);
+  if (T.running) T.endAt = Date.now() + T.remain * 1000;
+  renderClock();
+}
+async function openScoringNow() {
+  if (!S.currentRound || T.openedRound === S.currentRound) return;
+  T.openedRound = S.currentRound;
+  S.openRound = Math.max(S.openRound || 0, S.currentRound); save();
+  if (!apiUrl() || !S.synced) return;
+  try { const r = await api("openScoring", { sessionId: S.sessionId, round: S.currentRound }); if (!r.ok) T.openedRound = 0; }
+  catch { T.openedRound = 0; }
+}
 const qaSec = () => Math.round((Number(S.qaMin) || 0) * 60);
 function resetTimer() {
   clearInterval(T.tick); T.running = false; T.phase = "present"; T.remain = presentSec();
@@ -1205,14 +1275,23 @@ function renderClock() {
   const total = T.phase === "qa" ? qaSec() : presentSec();
   $("#runBar").style.width = (T.phase === "done" ? 100 : total ? (100 * (1 - T.remain / total)) : 0) + "%";
   setText($("#btnStart"), T.running ? "Tạm dừng" : (S.currentRound === 0 ? "Bắt đầu lượt 1" : "Bắt đầu"));
+  // QR + phiếu chấm chỉ mở khi còn 2 phút trình bày
+  const open = scoringGateOpen();
+  $("#qr").hidden = !open; $("#qrUrl").hidden = !open; $("#qrWait").hidden = open;
+  if (!open) {
+    const lead = Math.min(QR_LEAD, presentSec());
+    $("#qrWaitTime").textContent = S.currentRound && T.phase === "present" ? fmt(Math.max(0, T.remain - lead)) : "--:--";
+  }
+  if (open) openScoringNow();
 }
 async function goRound(k) {
   S.currentRound = Math.max(0, Math.min(k, S.roundsEff)); save();
+  T.openedRound = (S.openRound || 0) >= S.currentRound ? S.currentRound : 0;
   resetTimer(); renderRun();
   if (apiUrl() && S.synced) {
     try {
       const r = await api("setRound", { sessionId: S.sessionId, round: S.currentRound });
-      setStatus($("#runStatus"), r.ok ? `Đã mở lượt ${S.currentRound} cho SV chấm.` : errText(r.error), r.ok ? "ok" : "err");
+      setStatus($("#runStatus"), r.ok ? `Đã mở lượt ${S.currentRound}. Phiếu chấm mở khi còn 2 phút.` : errText(r.error), r.ok ? "ok" : "err");
     } catch { setStatus($("#runStatus"), "Không gửi được lượt lên Google Sheet.", "err"); }
   } else if (apiUrl()) {
     setStatus($("#runStatus"), "Chưa đồng bộ phân công: vào tab Phân công → Đồng bộ.", "err");
@@ -1253,12 +1332,26 @@ function renderQr() {
 
 /* ---------- Kết quả ---------- */
 let SCORES = [];
+const RES = { sessionId: "" };
+const viewingCurrent = () => !RES.sessionId || RES.sessionId === S.sessionId;
+async function loadResultSessions() {
+  const sel = $("#resSession"); if (!sel || !CLS.current) return;
+  try {
+    const r = await api("classSessions", { classId: CLS.current.classId }); if (!r.ok) return;
+    const list = r.sessions.slice();
+    if (S.sessionId && !list.some(x => x.sessionId === S.sessionId)) list.unshift({ sessionId: S.sessionId, sessionName: S.sessionName + " (chưa đồng bộ)", date: today() });
+    sel.replaceChildren(...list.map(x => el("option", { value: x.sessionId }, `${x.sessionName}${x.date ? " · " + x.date : ""}`)));
+    sel.value = list.some(x => x.sessionId === S.sessionId) ? S.sessionId : (list[0] ? list[0].sessionId : "");
+  } catch {}
+}
 async function loadScores() {
   const st = $("#resStatus");
   if (!apiUrl()) return setStatus(st, "Chưa có URL Web App.", "err");
   setStatus(st, "Đang tải…");
   try {
-    const r = await api("scores", { sessionId: S.sessionId });
+    const sid = $("#resSession").value || S.sessionId;
+    RES.sessionId = sid;
+    const r = await api("scores", { sessionId: sid });
     if (!r.ok) throw new Error(errText(r.error));
     SCORES = r.rows; renderResults();
     setStatus(st, `${SCORES.length} phiếu.`, "ok");
@@ -1266,9 +1359,10 @@ async function loadScores() {
 }
 function aggregate() {
   const map = new Map();
-  S.groups.forEach((g, gi) => g.members.forEach(m => map.set(String(m.id), { id: m.id, name: m.name, group: gName(gi), topic: g.topic, peer: [], gv: [] })));
+  if (viewingCurrent()) S.groups.forEach((g, gi) => g.members.forEach(m => map.set(String(m.id), { id: m.id, name: m.name, group: gName(gi), topic: g.topic, peer: [], gv: [] })));
   for (const r of SCORES) {
-    const p = map.get(String(r.presenterId)); if (!p) continue;
+    if (!map.has(String(r.presenterId))) map.set(String(r.presenterId), { id: r.presenterId, name: r.presenterName, group: r.presenterGroup, topic: r.topic, peer: [], gv: [] });
+    const p = map.get(String(r.presenterId));
     (r.role === "teacher" ? p.gv : p.peer).push(Number(r.total));
   }
   const avg = a => a.length ? round2(a.reduce((x, y) => x + y, 0) / a.length) : null;
@@ -1290,6 +1384,8 @@ function renderResults() {
   t.append(tb);
 
   const c = $("#countTable"); c.replaceChildren();
+  c.closest(".panel").hidden = !viewingCurrent();
+  if (!viewingCurrent()) return;
   c.append(el("thead", {}, el("tr", {}, el("th", {}, "Lượt"), S.groups.map((g, gi) => el("th", {}, "Bàn " + gName(gi))))));
   const cb = el("tbody");
   for (let k = 1; k <= S.roundsEff; k++) {
@@ -1306,9 +1402,10 @@ function renderResults() {
 function exportCsv() {
   const rows = aggregate();
   const lines = [["Buoi", "Nhom", "MSSV", "Ho ten", "Chu de", "So phieu", "TB dong dang", "GV", "Diem MP"]];
-  rows.forEach(r => lines.push([S.sessionName, r.group, r.id, r.name, r.topic, r.n, r.peerAvg ?? "", r.gvAvg ?? "", r.final ?? ""]));
+  const sname = ($("#resSession").selectedOptions[0] || {}).textContent || S.sessionName;
+  rows.forEach(r => lines.push([sname, r.group, r.id, r.name, r.topic, r.n, r.peerAvg ?? "", r.gvAvg ?? "", r.final ?? ""]));
   const csv = "﻿" + lines.map(l => l.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-  const a = el("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: `diem-mp-${S.sessionId || "buoi"}.csv` });
+  const a = el("a", { href: URL.createObjectURL(new Blob([csv], { type: "text/csv" })), download: `diem-mp-${RES.sessionId || S.sessionId || "buoi"}.csv` });
   document.body.append(a); a.click(); a.remove();
 }
 
@@ -1412,6 +1509,7 @@ function route() {
 }
 
 let teacherReady = false;
+let applyCriteriaFn = () => {};
 function initTeacher() {
   teacherReady = true;
   bindSetupInputs();
@@ -1419,7 +1517,7 @@ function initTeacher() {
   // Rubric theo buổi
   if (!S.criteriaText) S.criteriaText = CONFIG.PRESETS.mp;
   const critBox = $("#criteria");
-  const applyCriteria = () => {
+  const applyCriteria = applyCriteriaFn = () => {
     const { list, error } = parseCriteria(S.criteriaText);
     if (error) return setStatus($("#critStatus"), error, "err");
     CONFIG.CRITERIA = list;
@@ -1455,10 +1553,21 @@ function initTeacher() {
   $("#btnGvSubmit").onclick = submitGv;
   $("#btnSaveCfg").onclick = saveCfg;
   $("#btnLoadAcc").onclick = loadAccounts;
-  $("#btnSaveClass").onclick = saveClass;
+  $("#btnSaveClass").onclick = saveClassForm;
+  $("#btnNewClass").onclick = () => editClass(null);
   $("#btnPullRoster").onclick = pullRoster;
   $("#btnGenCode").onclick = () => { $("#clsCode").value = "MP-" + Math.random().toString(36).slice(2, 7).toUpperCase(); };
-  loadClass();
+  $("#classSelect").onchange = e => selectClass(e.target.value);
+  $("#btnMinus").onclick = () => adjustMinutes(-1);
+  $("#btnPlus").onclick = () => adjustMinutes(1);
+  ["runPresentMin", "runQaMin"].forEach(id => $("#" + id).addEventListener("input", e => {
+    const key = id === "runPresentMin" ? "presentMin" : "qaMin";
+    const v = Number(e.target.value); if (!(v >= 0)) return;
+    S[key] = v; $("#" + key).value = v; save();
+    if (!T.running && T.phase === "present" && (key === "presentMin")) resetTimer();
+  }));
+  $("#resSession").onchange = loadScores;
+  loadClasses();
   if (!S.groups.length) useChosenGroups();  // mở ra đã có phân công mẫu
   else recompute();
   renderHeader(); resetTimer(); renderGvSelectors();
@@ -1581,27 +1690,86 @@ function openPwModal(forced, oldPw) {
 })();
 
 /* ---------- GV: lớp học & danh sách đăng ký ---------- */
-async function loadClass() {
+/* ---------- GV: nhiều lớp (theo LPMS) ---------- */
+async function loadClasses(selectId) {
   try {
-    const r = await api("getClass"); if (!r.ok) return;
-    $("#clsName").value = r.cls.name; $("#clsCode").value = r.cls.code; $("#clsGroups").value = r.cls.groups;
-    $("#clsMax").value = r.cls.maxPerGroup; $("#clsOpen").checked = r.cls.open;
-  } catch {}
+    const r = await api("listClasses"); if (!r.ok) throw new Error(errText(r.error));
+    CLS.list = r.classes;
+    const sel = $("#classSelect");
+    const active = CLS.list.filter(c => c.status !== "archived"), archived = CLS.list.filter(c => c.status === "archived");
+    sel.replaceChildren(
+      ...(CLS.list.length ? [] : [el("option", { value: "" }, "Chưa có lớp – tạo ở Cài đặt")]),
+      ...active.map(c => el("option", { value: c.classId }, c.name)),
+      ...(archived.length ? [el("optgroup", { label: "Đã lưu trữ" }, ...archived.map(c => el("option", { value: c.classId }, c.name)))] : []));
+    renderClassTable();
+    const want = selectId || store.get("classId", "");
+    const pick = CLS.list.find(c => c.classId === want) || active[0] || CLS.list[0];
+    if (pick) selectClass(pick.classId, true); else { CLS.current = null; editClass(null); location.hash = "#config"; }
+  } catch (e) { toast(e.message || "Không tải được danh sách lớp.", "err"); }
 }
-async function saveClass() {
+function selectClass(classId, quiet) {
+  const c = CLS.list.find(x => x.classId === classId); if (!c) return;
+  if (CLS.current && CLS.current.classId !== classId) save();
+  const first = !CLS.current;
+  CLS.current = c; store.set("classId", classId); $("#classSelect").value = classId;
+  let saved = store.get(stateKey(), null);
+  if (!saved && first && store.get("state", null) && !store.get("legacyMoved", false)) { saved = store.get("state", null); store.set("legacyMoved", true); }
+  S = saved || freshState(c);
+  ["sessionName", "students", "topics", "groupCount", "rounds", "presentMin", "qaMin"].forEach(id => {
+    const key = { students: "studentsText", topics: "topicsText" }[id] || id; $("#" + id).value = S[key] ?? "";
+  });
+  $("#runPresentMin").value = S.presentMin; $("#runQaMin").value = S.qaMin;
+  if (!S.criteriaText) S.criteriaText = CONFIG.PRESETS.mp;
+  $("#criteria").value = S.criteriaText; applyCriteriaFn();
+  countStudents(); recompute(); renderHeader(); resetTimer(); renderGvSelectors();
+  SCORES = []; RES.sessionId = ""; renderResults(); loadResultSessions();
+  $("#accTable").replaceChildren(); setStatus($("#accStatus"), "");
+  renderClassTable();
+  if (!quiet) toast(`Đang làm việc với lớp ${c.name}.`, "ok");
+  applyTranslations();
+}
+function renderClassTable() {
+  const t = $("#clsTable"); if (!t) return; t.replaceChildren();
+  t.append(el("thead", {}, el("tr", {}, ["Tên lớp", "Học kỳ", "Mã lớp", "Nhóm", "SV", "Đăng ký", "Trạng thái", ""].map(h => el("th", {}, h)))));
+  const tb = el("tbody");
+  if (!CLS.list.length) tb.append(el("tr", {}, el("td", { colspan: "8", class: "muted" }, "Chưa có lớp nào. Bấm “+ Tạo lớp mới”.")));
+  CLS.list.forEach(c => tb.append(el("tr", {},
+    el("td", {}, el("b", {}, c.name), CLS.current && CLS.current.classId === c.classId ? el("span", { class: "badge-a on", style: "margin-left:6px" }, "đang chọn") : ""),
+    el("td", {}, c.semester || "—"), el("td", { class: "num" }, c.code), el("td", { class: "num" }, c.groups), el("td", { class: "num" }, c.students),
+    el("td", {}, el("span", { class: "badge-a" + (c.open ? " on" : "") }, c.open ? "Đang mở" : "Khoá")),
+    el("td", {}, c.status === "archived" ? "Lưu trữ" : "Đang dạy"),
+    el("td", {}, el("div", { class: "row" },
+      el("button", { type: "button", onclick: () => selectClass(c.classId) }, "Chọn"),
+      el("button", { type: "button", onclick: () => editClass(c) }, "Sửa"))))));
+  t.append(tb);
+}
+function editClass(c) {
+  $("#clsFormPanel").dataset.classId = c ? c.classId : "";
+  setText($("#clsFormTitle"), c ? "Sửa lớp: " + c.name : "Tạo lớp mới");
+  $("#clsName").value = c ? c.name : ""; $("#clsSemester").value = c ? (c.semester || "") : "";
+  $("#clsCode").value = c ? c.code : ""; $("#clsGroups").value = c ? c.groups : 6; $("#clsMax").value = c ? c.maxPerGroup : 6;
+  $("#clsOpen").checked = c ? c.open : true; $("#clsArchived").checked = c ? c.status === "archived" : false;
+  setStatus($("#clsStatus"), "");
+  $("#clsFormPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+async function saveClassForm() {
   const st = $("#clsStatus"); setStatus(st, "Đang lưu…");
   try {
-    const r = await api("setClass", { cls: { name: $("#clsName").value, code: $("#clsCode").value, groups: Number($("#clsGroups").value), maxPerGroup: Number($("#clsMax").value), open: $("#clsOpen").checked } });
-    if (!r.ok) throw new Error(r.error);
-    $("#clsCode").value = r.cls.code;
+    const cls = { classId: $("#clsFormPanel").dataset.classId || "", name: $("#clsName").value, semester: $("#clsSemester").value, code: $("#clsCode").value,
+                  groups: Number($("#clsGroups").value), maxPerGroup: Number($("#clsMax").value), open: $("#clsOpen").checked,
+                  status: $("#clsArchived").checked ? "archived" : "active" };
+    const r = await api("saveClass", { cls }); if (!r.ok) throw new Error(errText(r.error));
     setStatus(st, r.cls.open ? `Đã lưu. SV đăng ký bằng mã ${r.cls.code}.` : "Đã lưu. Đăng ký đang khoá.", "ok");
+    $("#clsFormPanel").dataset.classId = r.cls.classId;
+    await loadClasses(r.cls.classId);
   } catch (e) { setStatus(st, e.message || "Không lưu được.", "err"); }
 }
 async function pullRoster() {
   const st = $("#setupStatus"); setStatus(st, "Đang lấy danh sách đăng ký…");
   try {
-    const r = await api("accounts"); if (!r.ok) throw new Error(errText(r.error));
-    if (!r.rows.length) return setStatus(st, "Chưa có SV nào đăng ký.", "err");
+    if (!CLS.current) return setStatus(st, "Chưa chọn lớp (góc trên).", "err");
+    const r = await api("accounts", { classId: CLS.current.classId }); if (!r.ok) throw new Error(errText(r.error));
+    if (!r.rows.length) return setStatus(st, `Lớp ${CLS.current.name} chưa có SV nào đăng ký.`, "err");
     const rows = r.rows.slice().sort((a, b) => (a.group - b.group) || String(a.name).localeCompare(String(b.name), "vi"));
     S.studentsText = rows.map(x => `${x.studentId}, ${x.name}, ${x.group || ""}`).join("\n");
     $("#students").value = S.studentsText; countStudents(); save();
@@ -1613,23 +1781,23 @@ async function pullRoster() {
 async function loadAccounts() {
   const st = $("#accStatus"); setStatus(st, "Đang tải…");
   try {
-    const r = await api("accounts"); if (!r.ok) throw new Error(errText(r.error));
-    const acc = new Map(r.rows.map(x => [String(x.studentId).toLowerCase(), x]));
+    if (!CLS.current) throw new Error("Chưa chọn lớp.");
+    const r = await api("accounts", { classId: CLS.current.classId }); if (!r.ok) throw new Error(errText(r.error));
     const t = $("#accTable"); t.replaceChildren();
-    t.append(el("thead", {}, el("tr", {}, ["Nhóm (buổi này)", "MSSV", "Họ tên", "Nhóm đăng ký", "Lần đăng nhập gần nhất", ""].map(h => el("th", {}, h)))));
-    const tb = el("tbody"); let on = 0, total = 0;
-    S.groups.forEach((g, gi) => g.members.forEach(m => {
-      total++; const a = acc.get(String(m.id).toLowerCase()); if (a) on++;
-      const btn = a ? el("button", { type: "button", onclick: async () => {
+    t.append(el("thead", {}, el("tr", {}, ["Nhóm đăng ký", "MSSV", "Họ tên", "Lần đăng nhập gần nhất", ""].map(h => el("th", {}, h)))));
+    const tb = el("tbody");
+    r.rows.slice().sort((a, b) => (a.group - b.group) || String(a.name).localeCompare(String(b.name), "vi")).forEach(m => {
+      const btn = el("button", { type: "button", onclick: async () => {
         btn.disabled = true;
-        const x = await api("resetStudent", { studentId: m.id });
-        if (x.ok) { toast(`Đã đặt lại: mật khẩu tạm của ${m.name} là ${m.id}.`, "ok", 6000); loadAccounts(); } else { toast(errText(x.error), "err"); btn.disabled = false; }
-      } }, "Đặt lại mật khẩu") : "";
-      tb.append(el("tr", {}, el("td", {}, gName(gi)), el("td", { class: "num" }, m.id), el("td", {}, m.name),
-        el("td", {}, a ? (a.group ? "N" + a.group : "—") : el("span", { class: "muted" }, "Chưa đăng ký")),
-        el("td", { class: "num" }, a && a.lastLogin ? new Date(a.lastLogin).toLocaleString("vi-VN") : "—"), el("td", {}, btn)));
-    }));
-    t.append(tb); setStatus(st, `${on}/${total} SV đã đăng ký tài khoản.`, "ok");
+        const x = await api("resetStudent", { studentId: m.studentId });
+        if (x.ok) toast(`Đã đặt lại: mật khẩu tạm của ${m.name} là ${m.studentId}.`, "ok", 6000); else toast(errText(x.error), "err");
+        btn.disabled = false;
+      } }, "Đặt lại mật khẩu");
+      tb.append(el("tr", {}, el("td", {}, m.group ? "N" + m.group : "—"), el("td", { class: "num" }, m.studentId), el("td", {}, m.name),
+        el("td", { class: "num" }, m.lastLogin ? new Date(m.lastLogin).toLocaleString("vi-VN") : "—"), el("td", {}, btn)));
+    });
+    t.append(tb); setStatus(st, `${r.rows.length} SV đã đăng ký lớp ${CLS.current.name}.`, "ok");
+    applyTranslations(t);
   } catch (e) { setStatus(st, e.message, "err"); }
 }
 
@@ -1643,9 +1811,17 @@ function initStudent() {
   clearInterval(ST.poll); ST.poll = setInterval(pollState, 10000);
 }
 async function fetchState() {
-  const r = await api("state");
-  if (!r.ok) throw new Error(errText(r.error));
+  const r = await api("state", { classId: ST.classId || "" });
+  if (r.classes) { ST.classes = r.classes; ST.classId = r.classId; }
+  if (!r.ok) throw new Error(r.error === "no_session" ? "Lớp của bạn chưa có buổi nào đang diễn ra." : errText(r.error));
   return r.state;
+}
+function classSwitcher() {
+  if (!ST.classes || ST.classes.length < 2) return null;
+  const sel = el("select", { "aria-label": "Chọn lớp", onchange: e => { ST.classId = e.target.value; ST.state = null; refreshStudent(); } },
+    ...ST.classes.map(c => el("option", { value: c.classId }, c.name)));
+  sel.value = ST.classId || "";
+  return el("div", { class: "field" }, el("label", {}, "Lớp"), sel);
 }
 async function refreshStudent() {
   try {
@@ -1657,6 +1833,7 @@ async function refreshStudent() {
     box.replaceChildren(el("div", { class: "panel" },
       el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, ST.me.name),
         el("div", { class: "row" }, el("button", { type: "button", onclick: () => openPwModal(false) }, "Đổi mật khẩu"), el("button", { type: "button", onclick: logout }, "Đăng xuất")))),
+      classSwitcher(),
       el("div", { class: "notice" }, el("p", { class: "big" }, e.message || "Chưa có buổi nào đang diễn ra."), el("button", { type: "button", onclick: refreshStudent }, "Tải lại")));
     applyTranslations(box);
   }
@@ -1667,7 +1844,7 @@ async function pollState() {
   try {
     const state = await fetchState();
     if (!ST.state) { ST.state = state; renderStudent(); return; }
-    const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound;
+    const changed = state.sessionId !== ST.state.sessionId || state.currentRound !== ST.state.currentRound || Number(state.openRound || 0) !== Number(ST.state.openRound || 0);
     if (!changed) { ST.state = state; return; }
     if (!ST.dirty) { ST.state = state; renderStudent(); }
     else { ST.pendingState = state; const notice = $("#stNewRound"); if (notice) notice.hidden = false; }
@@ -1733,6 +1910,7 @@ function renderStudent({ carry = null } = {}) {
   box.append(el("div", { class: "panel" },
     el("div", { class: "row", style: "justify-content:space-between" }, el("b", {}, me.name), el("span", { class: "chip", style: `--gc:${gColor(me.groupIndex)}` }, "Bàn " + gName(me.groupIndex))),
     el("p", { class: "muted small" }, `Nhóm bạn trình bày: ${g.topic}`),
+    classSwitcher(),
     el("div", { class: "row" }, el("button", { type: "button", onclick: () => openPwModal(false) }, "Đổi mật khẩu"), el("button", { type: "button", onclick: studentLogout }, "Đăng xuất"))));
   box.append(el("details", { class:"panel", id:"studentHistory" },
     el("summary", { class:"row history-toggle", style:"justify-content:space-between" }, el("h2", {}, "Lịch sử qua các tuần"), el("span", { class:"status", id:"historyStatus" }, "Đang tải lịch sử từ Google Sheet…")),
@@ -1760,6 +1938,14 @@ function renderStudent({ carry = null } = {}) {
     el("span", { class: "muted small" }, `Lượt ${k} / ${st.rounds} · khách từ bàn ${gName(slot.fromGroup)}`),
     el("p", { class: "name" }, p.name),
     el("p", { class: "muted" }, "Chủ đề: " + st.groups[slot.fromGroup].topic)));
+
+  // Phiếu chấm chỉ mở khi còn 2 phút trình bày (GV mở) → SV phải nghe trước
+  if (st.openRound !== undefined && Number(st.openRound) < k) {
+    box.append(el("div", { class: "listen", role: "status" },
+      el("p", { class: "big" }, "Hãy lắng nghe bạn trình bày."),
+      el("p", { class: "muted small" }, "Phiếu chấm sẽ tự mở khi còn 2 phút. Không cần tải lại trang.")));
+    return;
+  }
 
   const newRound = el("div", { class: "notice", id: "stNewRound", hidden: true, role:"alert", "aria-live":"assertive" },
     el("p", { class:"big" }, "GV đã chuyển lượt. Bản nháp điểm của bạn vẫn được giữ."),
