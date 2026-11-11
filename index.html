@@ -300,7 +300,8 @@ body.fs .wrap { padding: 12px 20px; }
 .deco-truffle { right: 0; bottom: 0; width: 22%; height: 40%; background: linear-gradient(160deg, var(--auth-truffle), #b9653f); }
 .deco-flame { right: 22%; bottom: 0; width: 14%; height: 24%; background: linear-gradient(180deg, #ffb162, #f39a4b); }
 .deco-arc { top: -18%; right: 16%; width: 30vw; height: 30vw; max-width: 460px; max-height: 460px; border-radius: 50%; background: radial-gradient(circle at 30% 70%, #c9c1b1, transparent 70%); opacity: .7; }
-.auth-art { position: absolute; z-index: 0; left: 26%; bottom: -2%; width: min(46vw, 700px); pointer-events: none; }
+/* Hình 4 hàng ghế: nhỏ hơn bản cũ 15%, ghế thứ 4 sát cạnh trái màn hình */
+.auth-art { position: absolute; z-index: 0; left: 0; bottom: 0; width: min(50.8vw, 774px); height: auto; pointer-events: none; }
 .auth-inner { position: relative; z-index: 1; min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 440px); gap: 32px; align-items: center;
   padding-block: 32px; padding-left: max(24px, env(safe-area-inset-left, 0px), 6vw); padding-right: max(24px, env(safe-area-inset-right, 0px), 8vw); }
 .auth-copy { align-self: start; display: grid; gap: 18px; padding-top: 8px; max-width: 34rem; }
@@ -377,7 +378,7 @@ button.ghost { background: transparent; white-space: nowrap; flex: none; }
 <div id="login" class="auth" hidden>
   <div class="auth-deco deco-navy"></div><div class="auth-deco deco-arc"></div>
   <div class="auth-deco deco-flame"></div><div class="auth-deco deco-truffle"></div>
-  <img class="auth-art" src="podium.webp" onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src='assets/podium.webp'}else{this.hidden=true}" alt="" width="1200" height="795" decoding="async">
+  <img class="auth-art" src="podium.webp" onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src='assets/podium.webp'}else{this.hidden=true}" alt="" width="1560" height="828" decoding="async">
   <div class="auth-inner">
     <section class="auth-copy" aria-label="Giới thiệu">
       <div class="brand"><svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><rect x="2" y="2" width="44" height="44" rx="12" fill="#f39a4b"/><rect x="11" y="13" width="26" height="16" rx="3" fill="#f8f5ef"/><rect x="15" y="22" width="4" height="4" rx="1" fill="#f39a4b"/><rect x="21" y="19" width="4" height="7" rx="1" fill="#f39a4b"/><rect x="27" y="16" width="4" height="10" rx="1" fill="#a35139"/><path d="M20 35h8l-1 6h-6z" fill="#2c3b4d"/><rect x="17" y="32" width="14" height="4" rx="2" fill="#2c3b4d"/></svg><div><b>MicroPresentation</b><span>Peer Assessment</span></div></div>
